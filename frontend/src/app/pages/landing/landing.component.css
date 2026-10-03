@@ -1,0 +1,118 @@
+.hero-section {
+  padding: 5rem 0 3rem;
+  background: radial-gradient(circle at 50% 20%, rgba(99, 102, 241, 0.12) 0%, transparent 60%);
+}
+
+.hero-title {
+  font-size: 3rem;
+  line-height: 1.15;
+}
+
+.hero-subtitle {
+  font-size: 1.15rem;
+  color: var(--text-secondary);
+  max-width: 680px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.hero-search-card {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0.85rem 1rem;
+}
+
+.hero-search-form {
+  width: 100%;
+}
+
+.search-input-group {
+  padding: 0.25rem 0.5rem;
+}
+
+.search-input {
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  width: 100%;
+  outline: none;
+}
+
+.search-divider {
+  width: 1px;
+  height: 32px;
+  background: var(--border-card);
+}
+
+.tag-btn {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-card);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.tag-btn:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--primary-400);
+}
+
+.stat-box {
+  text-align: center;
+  padding: 1.5rem;
+}
+
+.workflow-card {
+  position: relative;
+  padding: 1.75rem 1.25rem;
+  border-top: 3px solid var(--primary-500);
+}
+
+.step-num {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--border-card);
+  margin-bottom: 0.5rem;
+  font-family: var(--font-mono);
+}
+
+.ai-banner {
+  background: linear-gradient(135deg, rgba(13, 18, 31, 0.95) 0%, rgba(19, 27, 46, 0.95) 100%);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+}
+
+.ai-chat-preview {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-card);
+  padding: 1.25rem;
+}
+
+.chat-bubble {
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-md);
+}
+
+.user-bubble {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border-bottom-right-radius: 2px;
+}
+
+.ai-bubble {
+  background: rgba(99, 102, 241, 0.12);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  color: var(--text-secondary);
+  border-bottom-left-radius: 2px;
+}
+
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 2.15rem;
+  }
+  .hero-search-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .search-divider {
+    display: none;
+  }
+}

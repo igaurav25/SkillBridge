@@ -1,0 +1,166 @@
+<div class="resume-builder-page py-8">
+  <div class="container">
+    <!-- Top Action Bar -->
+    <div class="flex items-center justify-between flex-wrap gap-4 mb-6">
+      <div>
+        <span class="badge badge-primary text-xs mb-1">CAREER TOOLING</span>
+        <h1 class="text-2xl font-bold">Professional Resume Builder</h1>
+        <p class="text-xs text-secondary">Craft ATS-friendly, multi-template developer resumes</p>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <button class="btn btn-outline btn-sm" (click)="createNewBlank()">+ New Resume</button>
+        <button class="btn btn-secondary btn-sm" (click)="populateFromProfile()">Sync Profile Data</button>
+        <button class="btn btn-outline btn-sm" (click)="printResume()">🖨️ Download / Print PDF</button>
+        <button class="btn btn-primary btn-sm" [disabled]="isSaving" (click)="saveResume()">
+          {{ isSaving ? 'Saving...' : '💾 Save Resume' }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Template Selector Bar -->
+    <div class="template-selector-card sb-card p-3 mb-6 flex items-center justify-between flex-wrap gap-4">
+      <div class="flex items-center gap-2">
+        <span class="text-xs font-bold text-muted uppercase">Template Style:</span>
+        <div class="flex items-center gap-2">
+          <button
+            class="badge template-pill"
+            [class.badge-primary]="selectedTemplate === 'modern'"
+            [class.badge-neutral]="selectedTemplate !== 'modern'"
+            (click)="selectedTemplate = 'modern'"
+          >
+            Modern Tech
+          </button>
+          <button
+            class="badge template-pill"
+            [class.badge-primary]="selectedTemplate === 'executive'"
+            [class.badge-neutral]="selectedTemplate !== 'executive'"
+            (click)="selectedTemplate = 'executive'"
+          >
+            Executive
+          </button>
+          <button
+            class="badge template-pill"
+            [class.badge-primary]="selectedTemplate === 'minimal'"
+            [class.badge-neutral]="selectedTemplate !== 'minimal'"
+            (click)="selectedTemplate = 'minimal'"
+          >
+            Clean Minimal
+          </button>
+          <button
+            class="badge template-pill"
+            [class.badge-primary]="selectedTemplate === 'tech'"
+            [class.badge-neutral]="selectedTemplate !== 'tech'"
+            (click)="selectedTemplate = 'tech'"
+          >
+            Terminal / Tech
+          </button>
+        </div>
+      </div>
+
+      <!-- User's saved resumes list -->
+      <div *ngIf="userResumes.length > 0" class="flex items-center gap-2">
+        <span class="text-xs text-muted">My Resumes:</span>
+        <select class="select-control text-xs py-1" (change)="loadResume(userResumes[+$any($event.target).value])">
+          <option *ngFor="let r of userResumes; let idx = index" [value]="idx">
+            {{ r.title }}
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Two Panes: Left Form Editor, Right Live Styled Preview -->
+    <div class="grid grid-2 gap-6">
+      <!-- Left Pane: Editor -->
+      <div class="editor-pane sb-card">
+        <h2 class="text-base font-bold mb-4">Edit Content</h2>
+
+        <div class="form-group">
+          <label class="form-label">Resume Title</label>
+          <input type="text" class="form-control" [(ngModel)]="activeResume.title" />
+        </div>
+
+        <div class="grid grid-2 gap-3" *ngIf="activeResume.personalDetails">
+          <div class="form-group">
+            <label class="form-label">Full Name</label>
+            <input type="text" class="form-control" [(ngModel)]="activeResume.personalDetails.fullName" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-control" [(ngModel)]="activeResume.personalDetails.email" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Phone</label>
+            <input type="text" class="form-control" [(ngModel)]="activeResume.personalDetails.phone" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Location</label>
+            <input type="text" class="form-control" [(ngModel)]="activeResume.personalDetails.location" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Professional Summary</label>
+          <textarea class="form-control" rows="3" [(ngModel)]="activeResume.summary"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Skills (Comma-separated)</label>
+          <input type="text" class="form-control" [(ngModel)]="skillsInput" placeholder="Angular, Node.js, TypeScript, Docker..." />
+        </div>
+      </div>
+
+      <!-- Right Pane: Live Interactive Resume Preview -->
+      <div class="preview-pane sb-card resume-sheet" [ngClass]="'template-' + selectedTemplate">
+        <div class="resume-header text-center mb-6">
+          <h1 class="preview-name text-2xl font-bold">{{ activeResume.personalDetails?.fullName || 'Your Full Name' }}</h1>
+          <div class="contact-row flex items-center justify-center gap-3 text-xs text-muted mt-2 flex-wrap">
+            <span *ngIf="activeResume.personalDetails?.email">📧 {{ activeResume.personalDetails?.email }}</span>
+            <span *ngIf="activeResume.personalDetails?.phone">📱 {{ activeResume.personalDetails?.phone }}</span>
+            <span *ngIf="activeResume.personalDetails?.location">📍 {{ activeResume.personalDetails?.location }}</span>
+          </div>
+        </div>
+
+        <!-- Summary -->
+        <div class="resume-section mb-5" *ngIf="activeResume.summary">
+          <h3 class="section-title text-xs font-bold uppercase tracking-wider mb-2">Professional Summary</h3>
+          <p class="text-xs text-secondary leading-relaxed">{{ activeResume.summary }}</p>
+        </div>
+
+        <!-- Skills -->
+        <div class="resume-section mb-5" *ngIf="skillsInput">
+          <h3 class="section-title text-xs font-bold uppercase tracking-wider mb-2">Core Competencies & Stack</h3>
+          <div class="flex items-center gap-1 flex-wrap">
+            <span *ngFor="let s of skillsInput.split(',')" class="preview-skill-pill text-xs">
+              {{ s.trim() }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Experience -->
+        <div class="resume-section mb-5" *ngIf="activeResume.experience && activeResume.experience.length > 0">
+          <h3 class="section-title text-xs font-bold uppercase tracking-wider mb-2">Work Experience</h3>
+          <div *ngFor="let exp of activeResume.experience" class="exp-item mb-3">
+            <div class="flex items-center justify-between text-xs">
+              <span class="font-bold text-primary">{{ exp.title }} — {{ exp.company }}</span>
+              <span class="text-muted">{{ exp.startDate }} - {{ exp.isCurrent ? 'Present' : exp.endDate }}</span>
+            </div>
+            <p class="text-xs text-secondary mt-1">{{ exp.description }}</p>
+          </div>
+        </div>
+
+        <!-- Education -->
+        <div class="resume-section" *ngIf="activeResume.education && activeResume.education.length > 0">
+          <h3 class="section-title text-xs font-bold uppercase tracking-wider mb-2">Education</h3>
+          <div *ngFor="let edu of activeResume.education" class="edu-item mb-2 text-xs">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-primary">{{ edu.degree }} in {{ edu.fieldOfStudy }}</span>
+              <span class="text-muted">{{ edu.graduationYear }}</span>
+            </div>
+            <div class="text-secondary">{{ edu.college }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

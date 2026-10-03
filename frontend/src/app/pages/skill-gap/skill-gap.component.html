@@ -1,0 +1,117 @@
+<div class="skill-gap-page py-8">
+  <div class="container-narrow">
+    <div class="text-center mb-8">
+      <span class="badge badge-purple text-xs font-bold mb-2">CAREER INTELLIGENCE</span>
+      <h1 class="text-3xl font-bold mb-2">Skill Gap & Role Roadmap Analyzer</h1>
+      <p class="text-sm text-secondary max-w-xl mx-auto">
+        Benchmark your developer skillset against real industry expectations for top engineering roles.
+      </p>
+    </div>
+
+    <!-- Role Selection Tabs -->
+    <div class="roles-bar sb-card p-3 mb-8 flex items-center justify-center gap-2 flex-wrap">
+      <button
+        *ngFor="let r of targetRoles"
+        class="badge role-pill"
+        [class.active]="selectedRole === r.title"
+        (click)="selectRole(r.title)"
+      >
+        {{ r.title }}
+      </button>
+    </div>
+
+    <!-- Loading Skeleton -->
+    <div *ngIf="isAnalyzing" class="sb-card skeleton" style="height: 350px;"></div>
+
+    <!-- Gap Results View (Section 15) -->
+    <div *ngIf="!isAnalyzing && gapAnalysis" class="flex flex-col gap-6">
+      <!-- Readiness Summary Score Card -->
+      <div class="sb-card p-6 bg-secondary">
+        <div class="flex items-center justify-between flex-wrap gap-4 mb-3">
+          <div>
+            <span class="badge badge-primary text-xs mb-1">READINESS EVALUATION</span>
+            <h2 class="text-2xl font-bold">{{ gapAnalysis.targetRole }} Readiness</h2>
+          </div>
+          <div class="readiness-meter text-3xl font-bold text-gradient">
+            {{ gapAnalysis.readinessScore }}%
+          </div>
+        </div>
+
+        <div class="progress-bar-container mb-4">
+          <div class="progress-bar-fill" [style.width.%]="gapAnalysis.readinessScore"></div>
+        </div>
+
+        <p class="text-sm text-secondary leading-relaxed">
+          {{ gapAnalysis.actionPlan }}
+        </p>
+      </div>
+
+      <!-- Existing vs Missing Skills Grid -->
+      <div class="grid grid-2 gap-6">
+        <div class="sb-card">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="text-emerald font-bold">✓</span>
+            <h3 class="text-sm font-bold">Existing Profile Skills</h3>
+          </div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <span *ngFor="let s of gapAnalysis.existingSkills" class="badge badge-emerald text-xs">
+              {{ s }}
+            </span>
+          </div>
+        </div>
+
+        <div class="sb-card">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="text-amber font-bold">•</span>
+            <h3 class="text-sm font-bold">Missing Industry Prerequisites</h3>
+          </div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <span *ngFor="let s of gapAnalysis.missingSkills" class="badge badge-amber text-xs">
+              {{ s }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Suggested Learning Roadmap Order (Section 15) -->
+      <div class="sb-card">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-base font-bold">Recommended Learning Sequence</h3>
+            <p class="text-xs text-secondary">Step-by-step path to close your technical gaps</p>
+          </div>
+          <span class="badge badge-cyan text-xs">AI Optimized</span>
+        </div>
+
+        <div class="roadmap-timeline flex flex-col gap-4">
+          <div *ngFor="let item of gapAnalysis.learningOrder" class="roadmap-card p-4 bg-secondary rounded flex items-start gap-4">
+            <div class="step-badge font-mono font-bold text-gradient text-lg">
+              0{{ item.step }}
+            </div>
+            <div class="flex-1">
+              <div class="flex items-center justify-between mb-1">
+                <h4 class="font-bold text-sm text-primary">{{ item.skill }}</h4>
+                <span class="badge badge-neutral text-xs">Est. {{ item.duration }}</span>
+              </div>
+              <p class="text-xs text-secondary">{{ item.reason }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Suggested Portfolio Projects -->
+      <div class="sb-card">
+        <h3 class="text-base font-bold mb-3">Suggested Proof-of-Work Projects</h3>
+        <div class="grid grid-2 gap-4">
+          <div *ngFor="let proj of gapAnalysis.suggestedProjects" class="p-4 bg-secondary rounded border-subtle">
+            <h4 class="font-bold text-sm mb-1">🔨 {{ proj.title }}</h4>
+            <p class="text-xs text-secondary mb-3">{{ proj.description }}</p>
+            <div class="flex items-center gap-1 flex-wrap">
+              <span *ngFor="let sk of proj.skills" class="badge badge-primary text-xs">{{ sk }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

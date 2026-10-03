@@ -1,0 +1,73 @@
+.resume-builder-page {
+  min-height: calc(100vh - 160px);
+}
+
+.template-pill {
+  cursor: pointer;
+  padding: 0.35rem 0.75rem;
+}
+
+.resume-sheet {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-card);
+  min-height: 580px;
+  padding: 2rem;
+  box-shadow: var(--shadow-md);
+}
+
+.section-title {
+  border-bottom: 1.5px solid var(--primary-500);
+  padding-bottom: 0.25rem;
+  color: var(--primary-400);
+}
+
+.preview-skill-pill {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+}
+
+/* Template: Executive */
+.template-executive .section-title {
+  border-bottom: 2px solid var(--text-primary);
+  color: var(--text-primary);
+  letter-spacing: 0.1em;
+}
+.template-executive .preview-name {
+  font-family: serif;
+}
+
+/* Template: Tech */
+.template-tech {
+  font-family: var(--font-mono);
+}
+.template-tech .section-title {
+  border-bottom: 1px dashed var(--accent-cyan);
+  color: var(--accent-cyan);
+}
+.template-tech .preview-skill-pill {
+  background: rgba(6, 182, 212, 0.1);
+  border-color: rgba(6, 182, 212, 0.3);
+}
+
+/* Print Styles */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .resume-sheet,
+  .resume-sheet * {
+    visibility: visible;
+  }
+  .resume-sheet {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    border: none;
+    box-shadow: none;
+    background: white !important;
+    color: black !important;
+  }
+}

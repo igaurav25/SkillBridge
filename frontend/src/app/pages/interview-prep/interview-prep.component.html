@@ -1,0 +1,233 @@
+<div class="interview-prep-page py-8">
+  <div class="container-narrow">
+    <div class="text-center mb-8">
+      <span class="badge badge-primary text-xs font-bold mb-2">ENGINEERING READINESS</span>
+      <h1 class="text-3xl font-bold mb-2">Technical Interview Preparation</h1>
+      <p class="text-sm text-secondary max-w-xl mx-auto">
+        Study verified interview questions and practice typed responses with our real-time AI evaluator.
+      </p>
+    </div>
+
+    <!-- Toggle Modes Bar (Bank vs AI Mock Practice) -->
+    <div class="mode-toggle-card sb-card p-2 mb-8 flex items-center justify-center gap-3">
+      <button
+        class="btn btn-sm"
+        [class.btn-primary]="activeView === 'bank'"
+        [class.btn-outline]="activeView !== 'bank'"
+        (click)="activeView = 'bank'"
+      >
+        📚 Question Bank & Practice
+      </button>
+      <button
+        class="btn btn-sm"
+        [class.btn-accent]="activeView === 'mock'"
+        [class.btn-outline]="activeView !== 'mock'"
+        (click)="activeView = 'mock'"
+      >
+        ⚡ AI Mock Interview (Live Evaluator)
+      </button>
+    </div>
+
+    <!-- VIEW 1: Question Bank -->
+    <div *ngIf="activeView === 'bank'" class="flex flex-col gap-6">
+      <!-- Categories Bar -->
+      <div class="categories-bar sb-card p-3 flex items-center gap-2 flex-wrap">
+        <button
+          *ngFor="let cat of categories"
+          class="badge cat-btn"
+          [class.active]="selectedCategory === cat"
+          (click)="selectedCategory = cat; fetchQuestions()"
+        >
+          {{ cat }}
+        </button>
+      </div>
+
+      <!-- Search & Difficulty -->
+      <div class="flex items-center gap-3 flex-wrap">
+        <div class="flex-1">
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Search topic or question (e.g. Signals, Event Loop, SOLID)..."
+            [(ngModel)]="searchTerm"
+            (keyup.enter)="fetchQuestions()"
+          />
+        </div>
+        <select class="select-control" style="width: auto;" [(ngModel)]="selectedDifficulty" (change)="fetchQuestions()">
+          <option value="All">All Difficulties</option>
+          <option value="Beginner">Beginner</option>
+          <option value="Intermediate">Intermediate</option>
+          <option value="Advanced">Advanced</option>
+        </select>
+        <button class="btn btn-primary btn-sm" (click)="fetchQuestions()">Search</button>
+      </div>
+
+      <!-- Question Accordion List -->
+      <div class="questions-list flex flex-col gap-3">
+        <div *ngFor="let q of questions" class="sb-card question-card">
+          <div class="flex items-center justify-between cursor-pointer" (click)="toggleAnswer(q._id)">
+            <div class="flex items-center gap-3">
+              <span class="badge badge-primary text-xs">{{ q.category }}</span>
+              <span class="badge badge-neutral text-xs">{{ q.difficulty }}</span>
+              <h3 class="text-sm font-bold">{{ q.question }}</h3>
+            </div>
+            <span class="arrow-toggle text-sm text-muted">
+              {{ openQuestionId === q._id ? '▲' : '▼' }}
+            </span>
+          </div>
+
+          <!-- Answer & Explanation Drawer -->
+          <div *ngIf="openQuestionId === q._id" class="answer-drawer mt-4 pt-4 border-top">
+            <h4 class="text-xs font-bold text-cyan uppercase tracking-wider mb-2">Model Answer</h4>
+            <p class="text-sm text-secondary mb-3 leading-relaxed">{{ q.answer }}</p>
+
+            <div *ngIf="q.codeSnippet" class="code-snippet-box mb-3">
+              <h5 class="text-xs text-muted font-bold uppercase mb-1">Code Example:</h5>
+              <pre class="bg-primary p-3 rounded font-mono text-xs overflow-x-auto text-secondary">{{ q.codeSnippet }}</pre>
+            </div>
+
+            <div *ngIf="q.explanation" class="text-xs text-muted bg-secondary p-2 rounded">
+              <strong>Key takeaway:</strong> {{ q.explanation }}
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="questions.length === 0 && !isLoading" class="empty-state">
+          No questions found matching your filter criteria.
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 2: AI Mock Interview (Section 22) -->
+    <div *ngIf="activeView === 'mock'" class="mock-interview-section flex flex-col gap-6">
+      <!-- Session Start Configuration Card -->
+      <div *ngIf="!activeMockSession" class="sb-card sb-card-glow p-6">
+        <h2 class="text-xl font-bold mb-2">Simulate a Real Technical Interview</h2>
+        <p class="text-xs text-secondary mb-6">
+          Our AI interviewer will present questions, listen to your typed response, and provide instant FAANG-style scoring, constructive critique, and model solutions.
+        </p>
+
+        <div class="grid grid-3 gap-4 mb-6">
+          <div class="form-group">
+            <label class="form-label">Interview Track</label>
+            <select class="select-control" [(ngModel)]="mockCategory">
+              <option value="JavaScript">JavaScript</option>
+              <option value="Angular">Angular 19</option>
+              <option value="Node.js">Node.js & Express</option>
+              <option value="MongoDB">MongoDB & Databases</option>
+              <option value="DSA">Data Structures & Algorithms</option>
+              <option value="HR">Behavioral (STAR Method)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Target Role Level</label>
+            <input type="text" class="form-control" [(ngModel)]="mockRole" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Difficulty</label>
+            <select class="select-control" [(ngModel)]="mockDifficulty">
+              <option value="Beginner">Junior / Entry</option>
+              <option value="Intermediate">Mid-Level</option>
+              <option value="Advanced">Senior / Lead</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="btn btn-primary btn-lg w-full" (click)="startMockInterview()">
+          Launch Live AI Mock Session ⚡
+        </button>
+      </div>
+
+      <!-- Active Mock Session Flow -->
+      <div *ngIf="activeMockSession" class="sb-card p-6">
+        <div class="flex items-center justify-between mb-4 border-bottom pb-3">
+          <div>
+            <span class="badge badge-cyan text-xs mb-1">MOCK SESSION: {{ activeMockSession.category }}</span>
+            <h2 class="text-lg font-bold">Question {{ currentQIndex + 1 }} of {{ activeMockSession.questions.length }}</h2>
+          </div>
+          <button class="btn btn-outline btn-sm text-xs" (click)="activeMockSession = null">Quit Session</button>
+        </div>
+
+        <!-- Question Prompt -->
+        <div class="question-prompt-box p-4 bg-secondary rounded mb-6">
+          <p class="text-base font-bold text-primary">
+            "{{ activeMockSession.questions[currentQIndex].question }}"
+          </p>
+        </div>
+
+        <!-- Answer Textarea -->
+        <div *ngIf="!latestEvaluation" class="answer-input-box mb-6">
+          <label class="form-label mb-2 block font-semibold text-sm">Type your technical explanation below:</label>
+          <textarea
+            class="form-control"
+            rows="6"
+            placeholder="Structure your answer with key concepts, trade-offs, and examples..."
+            [(ngModel)]="userAnswerText"
+          ></textarea>
+
+          <div class="flex justify-end mt-4">
+            <button
+              class="btn btn-primary"
+              [disabled]="isEvaluatingAnswer || !userAnswerText.trim()"
+              (click)="submitMockAnswer()"
+            >
+              {{ isEvaluatingAnswer ? 'AI Evaluating...' : 'Submit & Score Answer 🚀' }}
+            </button>
+          </div>
+        </div>
+
+        <!-- AI Evaluation Result -->
+        <div *ngIf="latestEvaluation" class="evaluation-result-box flex flex-col gap-4">
+          <div class="p-4 bg-secondary rounded border-glow">
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="font-bold text-base">AI Evaluation & Score</h3>
+              <span class="badge badge-emerald text-sm font-bold">
+                {{ latestEvaluation.score }}% Rating
+              </span>
+            </div>
+            <p class="text-sm text-secondary mb-3">{{ latestEvaluation.feedback }}</p>
+
+            <div class="grid grid-2 gap-3 mb-3">
+              <div class="p-2 bg-primary rounded">
+                <span class="text-xs font-bold text-emerald">Strengths:</span>
+                <ul class="text-xs text-secondary pl-4 mt-1">
+                  <li *ngFor="let str of latestEvaluation.strengths">{{ str }}</li>
+                </ul>
+              </div>
+              <div class="p-2 bg-primary rounded">
+                <span class="text-xs font-bold text-amber">Areas to Improve:</span>
+                <ul class="text-xs text-secondary pl-4 mt-1">
+                  <li *ngFor="let imp of latestEvaluation.areasToImprove">{{ imp }}</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="model-answer p-3 bg-primary rounded">
+              <span class="text-xs font-bold text-cyan">Ideal Model Answer:</span>
+              <p class="text-xs text-secondary mt-1">{{ latestEvaluation.suggestedAnswer }}</p>
+            </div>
+          </div>
+
+          <div class="flex justify-end">
+            <button
+              *ngIf="currentQIndex + 1 < activeMockSession.questions.length"
+              class="btn btn-primary"
+              (click)="nextQuestion()"
+            >
+              Next Question →
+            </button>
+            <button
+              *ngIf="currentQIndex + 1 >= activeMockSession.questions.length"
+              class="btn btn-success"
+              (click)="activeMockSession = null; fetchPastMockSessions()"
+            >
+              Complete Session & Save Scorecard ✓
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

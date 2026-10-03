@@ -1,0 +1,945 @@
+<div class="admin-page py-8">
+  <div class="container">
+    <!-- Top Header -->
+    <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8">
+      <div>
+        <div class="flex items-center gap-2 mb-1">
+          <span class="badge badge-danger text-xs font-bold">PLATFORM ADMINISTRATION</span>
+          <span class="text-xs font-semibold text-secondary">• System Governance</span>
+        </div>
+        <h1 class="text-3xl font-bold">Executive Control & Moderation</h1>
+        <p class="text-sm text-secondary">Monitor platform adoption, audit reported postings, verify corporate partners, and maintain system integrity.</p>
+      </div>
+    </div>
+
+    <!-- Top KPI Stat Cards -->
+    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 mb-8">
+      <div class="sb-card p-4 stat-card">
+        <span class="text-xs font-semibold text-secondary uppercase">Total Users</span>
+        <div class="text-2xl font-bold text-primary mt-1">{{ stats.totalUsers || 0 }}</div>
+      </div>
+      <div class="sb-card p-4 stat-card">
+        <span class="text-xs font-semibold text-secondary uppercase">Students</span>
+        <div class="text-2xl font-bold text-primary mt-1">{{ stats.totalStudents || 0 }}</div>
+      </div>
+      <div class="sb-card p-4 stat-card">
+        <span class="text-xs font-semibold text-secondary uppercase">Recruiters</span>
+        <div class="text-2xl font-bold text-accent mt-1">{{ stats.totalRecruiters || 0 }}</div>
+      </div>
+      <div class="sb-card p-4 stat-card">
+        <span class="text-xs font-semibold text-secondary uppercase">Companies</span>
+        <div class="text-2xl font-bold text-accent mt-1">{{ stats.totalCompanies || 0 }}</div>
+      </div>
+      <div class="sb-card p-4 stat-card">
+        <span class="text-xs font-semibold text-secondary uppercase">All Jobs</span>
+        <div class="text-2xl font-bold text-primary mt-1">{{ stats.totalJobs || 0 }}</div>
+      </div>
+      <div class="sb-card p-4 stat-card">
+        <span class="text-xs font-semibold text-secondary uppercase">Applications</span>
+        <div class="text-2xl font-bold text-success mt-1">{{ stats.totalApplications || 0 }}</div>
+      </div>
+      <div class="sb-card p-4 stat-card">
+        <span class="text-xs font-semibold text-secondary uppercase">Reports</span>
+        <div class="text-2xl font-bold text-danger mt-1">{{ stats.pendingReports || 0 }}</div>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="admin-nav-tabs mb-6 flex items-center gap-2 border-b border-border pb-2 overflow-x-auto">
+      <button
+        class="nav-tab-btn"
+        [class.active]="activeTab === 'overview'"
+        (click)="activeTab = 'overview'"
+      >
+        📊 Platform Overview
+      </button>
+      <button
+        class="nav-tab-btn"
+        [class.active]="activeTab === 'users'"
+        (click)="activeTab = 'users'"
+      >
+        👥 User Management ({{ users.length }})
+      </button>
+      <button
+        class="nav-tab-btn"
+        [class.active]="activeTab === 'jobs'"
+        (click)="activeTab = 'jobs'"
+      >
+        💼 Job Audit & Listings ({{ jobs.length }})
+      </button>
+      <button
+        class="nav-tab-btn"
+        [class.active]="activeTab === 'companies'"
+        (click)="activeTab = 'companies'"
+      >
+        🏢 Company Verification ({{ companies.length }})
+      </button>
+      <button
+        class="nav-tab-btn"
+        [class.active]="activeTab === 'reports'"
+        (click)="activeTab = 'reports'"
+      >
+        🚩 Flagged Content & Reports ({{ reports.length }})
+      </button>
+      <button
+        class="nav-tab-btn"
+        [class.active]="activeTab === 'settings'"
+        (click)="activeTab = 'settings'"
+      >
+        ⚙️ Admin Profile & Security
+      </button>
+    </div>
+
+    <!-- TAB 1: OVERVIEW -->
+    <div *ngIf="activeTab === 'overview'" class="flex flex-col gap-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Growth & Health Card -->
+        <div class="sb-card p-6">
+          <h3 class="font-bold text-lg mb-4">Platform Infrastructure Status</h3>
+          <div class="flex flex-col gap-4">
+            <div class="flex items-center justify-between p-3 bg-surface-hover rounded-md">
+              <div class="flex items-center gap-3">
+                <span class="w-3 h-3 rounded-full bg-success inline-block"></span>
+                <span class="text-sm font-semibold">Node.js Express REST API</span>
+              </div>
+              <span class="badge badge-success text-xs">Operational (Port 5000)</span>
+            </div>
+
+            <div class="flex items-center justify-between p-3 bg-surface-hover rounded-md">
+              <div class="flex items-center gap-3">
+                <span class="w-3 h-3 rounded-full bg-success inline-block"></span>
+                <span class="text-sm font-semibold">MongoDB Database</span>
+              </div>
+              <span class="badge badge-success text-xs">Connected & Indexed</span>
+            </div>
+
+            <div class="flex items-center justify-between p-3 bg-surface-hover rounded-md">
+              <div class="flex items-center gap-3">
+                <span class="w-3 h-3 rounded-full bg-accent inline-block"></span>
+                <span class="text-sm font-semibold">AI Intelligence Engine</span>
+              </div>
+              <span class="badge badge-accent text-xs">Gemini SDK & Heuristics</span>
+            </div>
+
+            <div class="flex items-center justify-between p-3 bg-surface-hover rounded-md">
+              <div class="flex items-center gap-3">
+                <span class="w-3 h-3 rounded-full bg-primary inline-block"></span>
+                <span class="text-sm font-semibold">Angular 19 Frontend Client</span>
+              </div>
+              <span class="badge badge-primary text-xs">Active & Responsive</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- System Governance Summary -->
+        <div class="sb-card p-6 flex flex-col justify-between">
+          <div>
+            <h3 class="font-bold text-lg mb-3">Moderation Alert Center</h3>
+            <p class="text-xs text-secondary mb-4 leading-relaxed">
+              SkillBridge automatically flags suspicious postings, high rejection rates, and student reports for manual review.
+            </p>
+
+            <div class="p-4 rounded-md border border-border bg-surface flex items-center justify-between mb-4">
+              <div>
+                <div class="text-sm font-bold">Unresolved Flags / Reports</div>
+                <div class="text-xs text-secondary">Student and recruiter submitted safety flags</div>
+              </div>
+              <span class="text-xl font-extrabold text-danger">{{ stats.pendingReports || 0 }}</span>
+            </div>
+
+            <div class="p-4 rounded-md border border-border bg-surface flex items-center justify-between">
+              <div>
+                <div class="text-sm font-bold">Unverified Enterprises</div>
+                <div class="text-xs text-secondary">Awaiting business authenticity confirmation</div>
+              </div>
+              <span class="text-xl font-extrabold text-warning">
+                {{ companies.length ? (companies.length - (companies | slice:0:1).length) : 0 }}
+              </span>
+            </div>
+          </div>
+
+          <div class="pt-4 border-t border-border flex gap-3">
+            <button class="btn btn-outline btn-sm flex-1" (click)="activeTab = 'reports'">Review Flags</button>
+            <button class="btn btn-primary btn-sm flex-1" (click)="activeTab = 'companies'">Audit Companies</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: USER MANAGEMENT -->
+    <div *ngIf="activeTab === 'users'" class="flex flex-col gap-6">
+      <div class="sb-card p-4 flex items-center gap-4 flex-wrap justify-between">
+        <div class="flex items-center gap-4 flex-wrap flex-1">
+          <input
+            type="text"
+            class="form-control max-w-xs"
+            placeholder="Search user by name or email..."
+            [(ngModel)]="userSearch"
+            (keyup.enter)="fetchUsers()"
+          />
+          <select class="select-control" [(ngModel)]="userRoleFilter" (change)="fetchUsers()">
+            <option value="all">All Roles</option>
+            <option value="student">Students</option>
+            <option value="recruiter">Recruiters</option>
+            <option value="admin">Administrators</option>
+          </select>
+        </div>
+        <button class="btn btn-primary btn-sm" (click)="fetchUsers()">Filter Users</button>
+      </div>
+
+      <div class="sb-card p-6">
+        <div class="table-container overflow-x-auto">
+          <table class="sb-table w-full">
+            <thead>
+              <tr>
+                <th>User & Account</th>
+                <th>Contact & Mobile</th>
+                <th>Auth & Password</th>
+                <th>Target Role / Enterprise</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let u of users" class="hover:bg-surface-hover transition-colors">
+                <!-- User & Account Details -->
+                <td>
+                  <div class="flex items-center gap-3">
+                    <img
+                      [src]="u.avatar || ('https://ui-avatars.com/api/?name=' + (u.name || 'User') + '&background=random')"
+                      alt="avatar"
+                      class="w-9 h-9 rounded-full object-cover border border-border shrink-0"
+                    />
+                    <div>
+                      <div class="font-bold text-sm flex items-center gap-1.5 flex-wrap">
+                        {{ u.name }}
+                        <span class="badge text-[10px] py-0 px-1.5" [ngClass]="u.role === 'admin' ? 'badge-danger' : u.role === 'recruiter' ? 'badge-accent' : 'badge-primary'">
+                          {{ u.role | uppercase }}
+                        </span>
+                      </div>
+                      <div class="text-xs font-mono text-primary flex items-center gap-1 mt-0.5" title="Login Gmail ID">
+                        <span>✉️</span> {{ u.loginEmail || u.email }}
+                      </div>
+                      <div class="text-[11px] text-secondary mt-0.5">
+                        Joined {{ u.createdAt | date:'mediumDate' }}
+                      </div>
+                    </div>
+                  </div>
+                </td>
+
+                <!-- Contact & Mobile -->
+                <td>
+                  <div class="flex flex-col gap-1">
+                    <div class="text-xs font-semibold flex items-center gap-1">
+                      <span class="text-emerald-500">📞</span>
+                      <span>{{ u.loginPhone || u.phone || 'Not specified' }}</span>
+                    </div>
+                    <div class="text-[11px] text-secondary">
+                      Provider: <span class="font-medium text-foreground">{{ u.authProvider || 'Direct Email' }}</span>
+                    </div>
+                  </div>
+                </td>
+
+                <!-- Auth & Password -->
+                <td>
+                  <div class="flex flex-col gap-1 max-w-[210px]">
+                    <span class="badge badge-success text-[10px] w-fit">
+                      {{ u.passwordStatus || 'Bcrypt Encrypted' }}
+                    </span>
+                    <div class="text-[11px] font-mono text-secondary truncate" [title]="u.passwordPreview">
+                      {{ u.passwordPreview || '•••••••• (Bcrypt Protected)' }}
+                    </div>
+                  </div>
+                </td>
+
+                <!-- Target Role / Enterprise -->
+                <td>
+                  <!-- For Students / Candidates -->
+                  <div *ngIf="u.role === 'student'" class="flex flex-col gap-1">
+                    <div class="text-xs font-bold text-foreground">
+                      🎯 Seeking: <span class="text-primary">{{ u.preferredRole || 'Full Stack / Tech Roles' }}</span>
+                    </div>
+                    <div class="text-[11px] text-secondary">
+                      Stream: <span class="font-medium">{{ u.preferredStream || u.education || 'B.Tech / General' }}</span>
+                      <span *ngIf="u.expectedSalary"> • Pay: {{ u.expectedSalary }}</span>
+                    </div>
+                    <div class="flex items-center gap-2 mt-1 flex-wrap">
+                      <span *ngIf="u.resumeScore" class="badge badge-accent text-[10px]">
+                        {{ u.resumeScore }}% ATS
+                      </span>
+                      <span class="text-[11px] text-secondary">
+                        {{ u.applicationsCount || 0 }} Applied
+                      </span>
+                    </div>
+                  </div>
+
+                  <!-- For Recruiters -->
+                  <div *ngIf="u.role === 'recruiter'" class="flex flex-col gap-1">
+                    <div class="text-xs font-bold text-foreground">
+                      🏢 {{ u.companyName || 'Corporate Recruiter' }}
+                    </div>
+                    <div class="text-[11px] text-secondary">
+                      {{ u.industry || 'IT & Services' }} • {{ u.companySize || 'Enterprise' }}
+                    </div>
+                    <div class="flex items-center gap-2 mt-1 flex-wrap">
+                      <span class="badge text-[10px]" [class.badge-success]="u.isVerified" [class.badge-warning]="!u.isVerified">
+                        {{ u.isVerified ? 'Verified Org' : 'Pending Verification' }}
+                      </span>
+                      <span class="text-[11px] text-secondary">
+                        {{ u.totalJobsPosted || 0 }} Jobs Posted
+                      </span>
+                    </div>
+                  </div>
+
+                  <!-- For Admin -->
+                  <div *ngIf="u.role === 'admin'" class="text-xs text-secondary italic">
+                    Platform Super Administrator
+                  </div>
+                </td>
+
+                <!-- Status -->
+                <td>
+                  <span class="badge text-xs" [class.badge-success]="u.status === 'active'" [class.badge-danger]="u.status === 'suspended'">
+                    {{ u.status || 'active' }}
+                  </span>
+                </td>
+
+                <!-- Actions -->
+                <td>
+                  <div class="flex items-center gap-1.5 flex-wrap">
+                    <button
+                      class="btn btn-outline btn-xs"
+                      title="Inspect Full Candidate/Recruiter Dossier"
+                      (click)="openUserDetails(u)"
+                    >
+                      🔍 Dossier
+                    </button>
+                    <button
+                      class="btn btn-xs"
+                      [class.btn-warning]="u.status === 'active'"
+                      [class.btn-success]="u.status === 'suspended'"
+                      (click)="toggleUserStatus(u)"
+                    >
+                      {{ u.status === 'active' ? 'Suspend' : 'Activate' }}
+                    </button>
+                    <button class="btn btn-danger btn-xs" (click)="deleteUser(u._id)">
+                      Delete
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: JOB AUDIT -->
+    <div *ngIf="activeTab === 'jobs'" class="flex flex-col gap-6">
+      <div class="sb-card p-4 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <select class="select-control" [(ngModel)]="jobFilter" (change)="fetchJobs()">
+            <option value="all">All Postings</option>
+            <option value="active">Active Only</option>
+            <option value="closed">Closed / Inactive</option>
+          </select>
+        </div>
+        <span class="text-xs text-secondary">{{ jobs.length }} Postings Recorded</span>
+      </div>
+
+      <div class="sb-card p-6">
+        <div class="table-container">
+          <table class="sb-table">
+            <thead>
+              <tr>
+                <th>Title & Company</th>
+                <th>Type & Mode</th>
+                <th>Salary</th>
+                <th>Status</th>
+                <th>Reports</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let j of jobs">
+                <td>
+                  <div class="font-bold text-sm">{{ j.title }}</div>
+                  <div class="text-xs text-secondary">{{ j.company?.name || 'Company' }} • 📍 {{ j.location }}</div>
+                </td>
+                <td class="text-xs font-semibold">{{ j.type | uppercase }} ({{ j.workMode }})</td>
+                <td class="text-xs font-bold text-primary">
+                  ${{ j.salary?.min | number }} - ${{ j.salary?.max | number }}
+                </td>
+                <td>
+                  <span class="badge text-xs" [class.badge-success]="j.status === 'active'" [class.badge-secondary]="j.status !== 'active'">
+                    {{ j.status }}
+                  </span>
+                </td>
+                <td>
+                  <span *ngIf="j.reportCount > 0" class="badge badge-danger text-xs font-bold">
+                    🚩 {{ j.reportCount }} Flags
+                  </span>
+                  <span *ngIf="!j.reportCount" class="text-xs text-secondary">Clean</span>
+                </td>
+                <td>
+                  <div class="flex items-center gap-2">
+                    <a [routerLink]="['/jobs', j._id]" target="_blank" class="btn btn-outline btn-xs">View</a>
+                    <button class="btn btn-danger btn-xs" (click)="deleteJob(j._id)">Remove</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: COMPANY VERIFICATION -->
+    <div *ngIf="activeTab === 'companies'" class="flex flex-col gap-6">
+      <div class="sb-card p-6">
+        <div class="table-container">
+          <table class="sb-table">
+            <thead>
+              <tr>
+                <th>Enterprise Name</th>
+                <th>Industry</th>
+                <th>Size & Location</th>
+                <th>Verified Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let c of companies">
+                <td>
+                  <div class="font-bold text-sm">{{ c.name }}</div>
+                  <a *ngIf="c.website" [href]="c.website" target="_blank" class="text-xs text-primary underline">{{ c.website }}</a>
+                </td>
+                <td class="text-xs font-medium">{{ c.industry }}</td>
+                <td class="text-xs text-secondary">{{ c.companySize }} • {{ c.location }}</td>
+                <td>
+                  <span class="badge text-xs" [class.badge-success]="c.isVerified" [class.badge-warning]="!c.isVerified">
+                    {{ c.isVerified ? '✓ Verified Partner' : '⏳ Pending Review' }}
+                  </span>
+                </td>
+                <td>
+                  <button
+                    class="btn btn-xs"
+                    [class.btn-outline]="c.isVerified"
+                    [class.btn-primary]="!c.isVerified"
+                    (click)="toggleCompanyVerification(c)"
+                  >
+                    {{ c.isVerified ? 'Revoke Verification' : 'Verify Enterprise' }}
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 5: REPORTS & FLAGGED CONTENT -->
+    <div *ngIf="activeTab === 'reports'" class="flex flex-col gap-6">
+      <div class="sb-card p-4 flex items-center justify-between">
+        <select class="select-control" [(ngModel)]="reportStatusFilter" (change)="fetchReports()">
+          <option value="all">All Report Statuses</option>
+          <option value="pending">Pending Review</option>
+          <option value="under_review">Under Investigation</option>
+          <option value="resolved">Resolved</option>
+          <option value="rejected">Dismissed / Rejected</option>
+        </select>
+        <span class="text-xs text-secondary">{{ reports.length }} Reports Logged</span>
+      </div>
+
+      <div *ngIf="reports.length === 0" class="sb-card p-12 text-center">
+        <p class="text-sm text-secondary">No reports currently matching the filter criteria.</p>
+      </div>
+
+      <div *ngIf="reports.length > 0" class="sb-card p-6">
+        <div class="table-container">
+          <table class="sb-table">
+            <thead>
+              <tr>
+                <th>Report Target</th>
+                <th>Reason</th>
+                <th>Details</th>
+                <th>Status</th>
+                <th>Reported On</th>
+                <th>Resolution</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let rep of reports">
+                <td>
+                  <span class="badge badge-secondary text-xs uppercase">{{ rep.targetType }}</span>
+                  <div class="text-xs font-bold mt-1">ID: {{ rep.targetId.substring(0, 10) }}...</div>
+                </td>
+                <td class="text-xs font-semibold text-danger">{{ rep.reason }}</td>
+                <td class="text-xs text-secondary max-w-xs">{{ rep.details || rep.description }}</td>
+                <td>
+                  <span class="badge text-xs" [ngClass]="'badge-' + rep.status">
+                    {{ rep.status }}
+                  </span>
+                </td>
+                <td class="text-xs text-secondary">{{ rep.createdAt | date:'mediumDate' }}</td>
+                <td>
+                  <button class="btn btn-outline btn-xs" (click)="openReportModal(rep)">
+                    Resolve
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 6: ADMIN PROFILE & SECURITY SETTINGS -->
+    <div *ngIf="activeTab === 'settings'" class="flex flex-col gap-6">
+      <!-- Admin Identity Card -->
+      <!-- Admin Profile Card -->
+      <div class="sb-card p-6">
+        <div class="flex items-center gap-5 flex-wrap">
+          <div class="relative group">
+            <img
+              [src]="adminAvatar"
+              [alt]="adminName"
+              class="w-20 h-20 rounded-full object-cover border-2 border-primary shadow-md"
+            />
+            <label
+              class="absolute inset-0 bg-black/60 rounded-full flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer text-white text-xs font-semibold"
+            >
+              <span>📷 Change</span>
+              <input
+                type="file"
+                (change)="onAdminAvatarSelected($event)"
+                accept="image/png,image/jpeg,image/webp"
+                class="hidden"
+              />
+            </label>
+          </div>
+
+          <div class="flex-1">
+            <div class="flex items-center gap-2 mb-1 flex-wrap">
+              <h2 class="text-xl font-bold">{{ adminName || 'Admin' }}</h2>
+              <span class="badge badge-danger text-xs font-bold">SUPER ADMIN</span>
+              <span *ngIf="adminId" class="badge badge-outline text-[11px] font-mono text-secondary" title="Administrator MongoDB ID">
+                ID: {{ adminId }}
+              </span>
+            </div>
+            <p class="text-sm text-secondary">{{ adminEmail }}</p>
+            <p class="text-xs text-muted mt-1">Full root privileges to manage users, companies, security, and jobs across SkillBridge.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Combined Admin Profile Management -->
+      <div class="sb-card p-6">
+        <div class="flex items-center justify-between gap-3 mb-4 flex-wrap">
+          <div>
+            <h3 class="text-base font-bold flex items-center gap-2">
+              <span>👤</span> Administrator Profile & Contact Details
+            </h3>
+            <p class="text-xs text-secondary mt-0.5">
+              Manage your master administrative name, Gmail ID used to sign in, and direct phone contact.
+            </p>
+          </div>
+          <button
+            type="button"
+            class="btn btn-primary btn-sm"
+            [disabled]="isUpdatingAdminName"
+            (click)="saveFullAdminProfile()"
+          >
+            {{ isUpdatingAdminName ? 'Saving Changes...' : '💾 Save Full Profile Info' }}
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+          <!-- Admin Name -->
+          <div>
+            <label class="form-label text-xs font-semibold">Admin Display Name</label>
+            <div class="flex gap-2">
+              <input
+                type="text"
+                class="form-control text-sm"
+                [(ngModel)]="adminName"
+                placeholder="e.g. Master Administrator"
+              />
+              <button
+                type="button"
+                class="btn btn-outline btn-xs"
+                [disabled]="isUpdatingAdminName || !adminName.trim()"
+                (click)="saveAdminName()"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+
+          <!-- Admin Gmail / Email -->
+          <div>
+            <label class="form-label text-xs font-semibold">Admin Gmail / Login Email</label>
+            <div class="flex gap-2">
+              <input
+                type="email"
+                class="form-control text-sm"
+                [(ngModel)]="adminEmail"
+                placeholder="e.g. admin@gmail.com"
+              />
+              <button
+                type="button"
+                class="btn btn-outline btn-xs"
+                [disabled]="isUpdatingAdminEmail || !adminEmail.trim()"
+                (click)="saveAdminEmail()"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+
+          <!-- Admin Mobile Phone -->
+          <div>
+            <label class="form-label text-xs font-semibold">Admin Contact Mobile Phone</label>
+            <div class="flex gap-2">
+              <input
+                type="tel"
+                class="form-control text-sm"
+                [(ngModel)]="adminPhone"
+                placeholder="e.g. +91 98765 43210"
+              />
+              <button
+                type="button"
+                class="btn btn-outline btn-xs"
+                [disabled]="isUpdatingAdminPhone"
+                (click)="saveAdminPhone()"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Change Admin Password -->
+      <div class="sb-card p-6">
+        <div class="flex items-center gap-2 mb-1">
+          <h3 class="text-base font-bold">Change Admin Password</h3>
+          <span class="badge badge-warning text-xs">Security Critical</span>
+        </div>
+        <p class="text-xs text-secondary mb-4">Ensure your administrator account uses a strong, high-entropy password.</p>
+
+        <form (ngSubmit)="saveAdminPassword()" style="max-width: 480px;">
+          <div class="form-group mb-3">
+            <label class="form-label">Current Password</label>
+            <input
+              type="password"
+              class="form-control"
+              [(ngModel)]="adminCurrentPassword"
+              name="adminCurrentPassword"
+              placeholder="••••••••"
+              required
+            />
+          </div>
+
+          <div class="form-group mb-3">
+            <label class="form-label">New Password (Min. 6 characters)</label>
+            <input
+              type="password"
+              class="form-control"
+              [(ngModel)]="adminNewPassword"
+              name="adminNewPassword"
+              placeholder="••••••••"
+              required
+            />
+          </div>
+
+          <div class="form-group mb-4">
+            <label class="form-label">Confirm New Password</label>
+            <input
+              type="password"
+              class="form-control"
+              [(ngModel)]="adminConfirmPassword"
+              name="adminConfirmPassword"
+              placeholder="••••••••"
+              required
+            />
+          </div>
+
+          <button
+            type="submit"
+            class="btn btn-primary btn-sm"
+            [disabled]="isUpdatingAdminPassword || !adminCurrentPassword || !adminNewPassword || !adminConfirmPassword"
+          >
+            {{ isUpdatingAdminPassword ? 'Updating Password...' : 'Update Admin Password 🔒' }}
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: REPORT RESOLUTION -->
+<div *ngIf="showReportModal && selectedReport" class="modal-backdrop">
+  <div class="modal-card max-w-md">
+    <div class="flex items-center justify-between pb-3 border-b border-border mb-3">
+      <h3 class="font-bold text-base">Audit Flagged Content</h3>
+      <button class="btn btn-sm btn-outline" (click)="showReportModal = false">✕</button>
+    </div>
+
+    <div class="text-xs mb-4 p-3 bg-surface-hover rounded-md">
+      <div class="font-bold text-danger mb-1">{{ selectedReport.reason }}</div>
+      <p class="text-secondary">{{ selectedReport.details || selectedReport.description }}</p>
+    </div>
+
+    <div class="flex flex-col gap-3">
+      <div>
+        <label class="form-label">Set Resolution Status</label>
+        <select class="select-control" [(ngModel)]="reportActionStatus">
+          <option value="resolved">Resolved (Action Taken)</option>
+          <option value="under_review">Under Active Review</option>
+          <option value="rejected">Dismiss / Inaccurate</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="form-label">Internal Resolution Notes</label>
+        <textarea class="form-control" rows="3" [(ngModel)]="reportActionNotes" placeholder="Describe the outcome or communication with user..."></textarea>
+      </div>
+
+      <div class="pt-3 border-t border-border flex justify-end gap-2">
+        <button type="button" class="btn btn-outline btn-sm" (click)="showReportModal = false">Cancel</button>
+        <button type="button" class="btn btn-primary btn-sm" (click)="submitReportAction()">Confirm Resolution</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: USER DOSSIER DEEP INSPECTION -->
+<div *ngIf="showUserDetailsModal && selectedUserForDetails" class="modal-backdrop">
+  <div class="modal-card max-w-2xl max-h-[90vh] overflow-y-auto">
+    <!-- Header -->
+    <div class="flex items-center justify-between pb-4 border-b border-border mb-4">
+      <div class="flex items-center gap-3">
+        <img
+          [src]="selectedUserForDetails.avatar || ('https://ui-avatars.com/api/?name=' + (selectedUserForDetails.name || 'User') + '&background=random')"
+          alt="avatar"
+          class="w-12 h-12 rounded-full object-cover border-2 border-primary"
+        />
+        <div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <h3 class="font-bold text-lg">{{ selectedUserForDetails.name }}</h3>
+            <span class="badge text-xs" [ngClass]="selectedUserForDetails.role === 'admin' ? 'badge-danger' : selectedUserForDetails.role === 'recruiter' ? 'badge-accent' : 'badge-primary'">
+              {{ selectedUserForDetails.role | uppercase }}
+            </span>
+            <span class="badge text-xs" [class.badge-success]="selectedUserForDetails.status === 'active'" [class.badge-danger]="selectedUserForDetails.status === 'suspended'">
+              {{ selectedUserForDetails.status || 'active' }}
+            </span>
+          </div>
+          <div class="text-xs text-secondary mt-0.5 font-mono">
+            User ID: {{ selectedUserForDetails._id }}
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-sm btn-outline" (click)="closeUserDetails()">✕</button>
+    </div>
+
+    <!-- Section 1: Authentication & Contact Credentials -->
+    <div class="mb-4">
+      <h4 class="text-xs font-bold uppercase tracking-wider text-secondary mb-2">
+        🔑 Login & Security Credentials
+      </h4>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3.5 bg-surface-hover rounded-lg border border-border">
+        <div>
+          <span class="text-[11px] text-secondary block">Login Gmail / Email ID</span>
+          <span class="text-sm font-semibold text-primary font-mono select-all">
+            {{ selectedUserForDetails.loginEmail || selectedUserForDetails.email }}
+          </span>
+        </div>
+        <div>
+          <span class="text-[11px] text-secondary block">Contact Mobile Phone</span>
+          <span class="text-sm font-semibold text-foreground flex items-center gap-1">
+            <span class="text-emerald-500">📞</span>
+            {{ selectedUserForDetails.loginPhone || selectedUserForDetails.phone || 'Not provided' }}
+          </span>
+        </div>
+        <div>
+          <span class="text-[11px] text-secondary block">Auth Provider / Sign-in Type</span>
+          <span class="text-xs font-medium text-foreground">
+            {{ selectedUserForDetails.authProvider === 'google' ? 'Google OAuth 2.0 (Gmail Direct)' : 'Direct Email & Password' }}
+          </span>
+        </div>
+        <div>
+          <span class="text-[11px] text-secondary block">Registered On Platform</span>
+          <span class="text-xs font-medium text-foreground">
+            {{ selectedUserForDetails.createdAt | date:'medium' }}
+          </span>
+        </div>
+        <div class="sm:col-span-2 pt-2 border-t border-border/50">
+          <span class="text-[11px] text-secondary block">Password Security State</span>
+          <div class="flex items-center gap-2 mt-0.5">
+            <span class="badge badge-success text-[10px]">
+              {{ selectedUserForDetails.passwordStatus || 'Bcrypt 256-bit Encrypted' }}
+            </span>
+            <span class="text-xs font-mono text-secondary truncate max-w-sm" [title]="selectedUserForDetails.passwordPreview">
+              {{ selectedUserForDetails.passwordPreview || '•••••••• (Bcrypt Protected)' }}
+            </span>
+          </div>
+          <p class="text-[10px] text-muted mt-1">
+            * Passwords are irreversibly encrypted using industry-standard 256-bit salt hashes to prevent unauthorized access.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 2: Candidate Real Career & Job Search Preferences (If Student/Jobseeker) -->
+    <div *ngIf="selectedUserForDetails.role === 'student'" class="mb-4">
+      <h4 class="text-xs font-bold uppercase tracking-wider text-secondary mb-2">
+        🎯 Candidate Career Intent & Job Seeking Preferences
+      </h4>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3.5 bg-surface-hover rounded-lg border border-border">
+        <div>
+          <span class="text-[11px] text-secondary block">Target Job Role Looking For</span>
+          <span class="text-sm font-bold text-primary">
+            {{ selectedUserForDetails.preferredRole || 'Software Development Engineer / General' }}
+          </span>
+        </div>
+        <div>
+          <span class="text-[11px] text-secondary block">Academic Degree / Stream Track</span>
+          <span class="text-sm font-semibold text-foreground">
+            {{ selectedUserForDetails.preferredStream || selectedUserForDetails.education || 'B.Tech Computer Science' }}
+          </span>
+        </div>
+        <div>
+          <span class="text-[11px] text-secondary block">Preferred Work Location</span>
+          <span class="text-xs font-medium text-foreground">
+            📍 {{ selectedUserForDetails.preferredLocation || 'Pan-India / Remote / Hybrid' }}
+          </span>
+        </div>
+        <div>
+          <span class="text-[11px] text-secondary block">Expected Salary Package</span>
+          <span class="text-xs font-semibold text-emerald-600">
+            💰 {{ selectedUserForDetails.expectedSalary || 'Market Competitive (₹8.0 - ₹16.0 LPA)' }}
+          </span>
+        </div>
+        <div class="sm:col-span-2 pt-2 border-t border-border/50">
+          <span class="text-[11px] text-secondary block mb-1">Key Verified Skills</span>
+          <div class="flex flex-wrap gap-1.5">
+            <span
+              *ngFor="let skill of (selectedUserForDetails.targetSkills || ['React', 'Node.js', 'TypeScript', 'SQL', 'Git'])"
+              class="badge badge-outline text-[11px] py-0.5 px-2 bg-surface"
+            >
+              {{ skill }}
+            </span>
+          </div>
+        </div>
+        <div class="sm:col-span-2 pt-2 border-t border-border/50 flex items-center justify-between flex-wrap gap-3">
+          <div class="flex items-center gap-4">
+            <div>
+              <span class="text-[10px] text-secondary block">Applications Submitted</span>
+              <span class="text-base font-extrabold text-foreground">
+                {{ selectedUserForDetails.applicationsCount || 0 }}
+              </span>
+            </div>
+            <div>
+              <span class="text-[10px] text-secondary block">Saved Opportunities</span>
+              <span class="text-base font-extrabold text-foreground">
+                {{ selectedUserForDetails.savedJobsCount || 0 }}
+              </span>
+            </div>
+          </div>
+          <div *ngIf="selectedUserForDetails.resumeScore" class="flex items-center gap-2">
+            <span class="text-xs font-semibold">Resume ATS Score:</span>
+            <span class="badge badge-accent text-xs font-bold">
+              {{ selectedUserForDetails.resumeScore }}%
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 3: Recruiter Enterprise & Hiring Details (If Recruiter) -->
+    <div *ngIf="selectedUserForDetails.role === 'recruiter'" class="mb-4">
+      <h4 class="text-xs font-bold uppercase tracking-wider text-secondary mb-2">
+        🏢 Recruiter Organization & Hiring Profile
+      </h4>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3.5 bg-surface-hover rounded-lg border border-border">
+        <div>
+          <span class="text-[11px] text-secondary block">Company / Organization</span>
+          <span class="text-sm font-bold text-foreground">
+            {{ selectedUserForDetails.companyName || 'Corporate Entity' }}
+          </span>
+        </div>
+        <div>
+          <span class="text-[11px] text-secondary block">Industry Sector</span>
+          <span class="text-sm font-medium text-foreground">
+            {{ selectedUserForDetails.industry || 'Information Technology & Cloud' }}
+          </span>
+        </div>
+        <div>
+          <span class="text-[11px] text-secondary block">Corporate Website</span>
+          <a
+            *ngIf="selectedUserForDetails.website"
+            [href]="selectedUserForDetails.website"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-xs text-primary underline truncate block"
+          >
+            {{ selectedUserForDetails.website }} ↗
+          </a>
+          <span *ngIf="!selectedUserForDetails.website" class="text-xs text-secondary">
+            Not specified
+          </span>
+        </div>
+        <div>
+          <span class="text-[11px] text-secondary block">Headquarters / Location</span>
+          <span class="text-xs font-medium text-foreground">
+            📍 {{ selectedUserForDetails.location || 'Bangalore, India' }}
+          </span>
+        </div>
+        <div>
+          <span class="text-[11px] text-secondary block">Workforce Size</span>
+          <span class="text-xs font-medium text-foreground">
+            👥 {{ selectedUserForDetails.companySize || '50-200 employees' }}
+          </span>
+        </div>
+        <div>
+          <span class="text-[11px] text-secondary block">Live Vacancies Posted</span>
+          <span class="text-sm font-extrabold text-primary">
+            {{ selectedUserForDetails.totalJobsPosted || 0 }} Active Jobs
+          </span>
+        </div>
+        <div class="sm:col-span-2 pt-2 border-t border-border/50 flex items-center justify-between">
+          <span class="text-xs font-semibold">Enterprise Verification:</span>
+          <span
+            class="badge text-xs"
+            [class.badge-success]="selectedUserForDetails.isVerified"
+            [class.badge-warning]="!selectedUserForDetails.isVerified"
+          >
+            {{ selectedUserForDetails.isVerified ? '✅ Officially Verified Enterprise' : '⏳ Pending Business Verification' }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Footer Actions -->
+    <div class="pt-4 border-t border-border flex items-center justify-between flex-wrap gap-2">
+      <div class="flex items-center gap-2">
+        <button
+          class="btn btn-xs"
+          [class.btn-warning]="selectedUserForDetails.status === 'active'"
+          [class.btn-success]="selectedUserForDetails.status === 'suspended'"
+          (click)="toggleUserStatus(selectedUserForDetails)"
+        >
+          {{ selectedUserForDetails.status === 'active' ? 'Suspend Account' : 'Reactivate Account' }}
+        </button>
+        <button
+          class="btn btn-danger btn-xs"
+          (click)="deleteUser(selectedUserForDetails._id); closeUserDetails()"
+        >
+          Delete User Record
+        </button>
+      </div>
+      <button class="btn btn-primary btn-sm" (click)="closeUserDetails()">Close Dossier</button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,189 @@
+<div class="landing-page">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="container text-center">
+      <div class="hero-badge-wrapper flex justify-center mb-4">
+        <span class="badge badge-primary py-1 px-3 text-xs font-bold">
+          ⚡ NEXT-GEN CAREER PLATFORM POWERED BY AI
+        </span>
+      </div>
+
+      <h1 class="hero-title mb-4">
+        Bridge the Gap Between Your Skills and <br />
+        <span class="text-gradient">Dream Tech Careers</span>
+      </h1>
+
+      <p class="hero-subtitle mb-8">
+        SkillBridge empowers developers and students with AI resume analysis, personalized skill gap roadmaps, verified job matching, and real-time application tracking.
+      </p>
+
+      <!-- Global Hero Search Bar -->
+      <div class="hero-search-card sb-card sb-card-glow mb-6">
+        <form (ngSubmit)="onSearch()" class="hero-search-form flex items-center gap-3">
+          <div class="search-input-group flex-1 flex items-center gap-2">
+            <span class="search-icon">🔍</span>
+            <input
+              type="text"
+              class="search-input"
+              placeholder="Job title, skill (e.g. Angular, Node.js), or company"
+              [(ngModel)]="searchTitle"
+              name="searchTitle"
+            />
+          </div>
+
+          <div class="search-divider"></div>
+
+          <div class="search-input-group flex-1 flex items-center gap-2">
+            <span class="search-icon">📍</span>
+            <input
+              type="text"
+              class="search-input"
+              placeholder="Location or 'Remote'"
+              [(ngModel)]="searchLocation"
+              name="searchLocation"
+            />
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-lg">
+            Search Opportunities
+          </button>
+        </form>
+      </div>
+
+      <!-- Popular Tags -->
+      <div class="popular-tags flex items-center justify-center gap-2 flex-wrap mb-10">
+        <span class="text-xs text-muted font-semibold">Popular searches:</span>
+        <button
+          *ngFor="let tag of popularSearches"
+          class="badge badge-neutral tag-btn"
+          (click)="quickSearch(tag)"
+        >
+          {{ tag }}
+        </button>
+      </div>
+
+      <!-- Platform Stats Bar -->
+      <div class="stats-row grid grid-4 gap-4 pt-4">
+        <div class="stat-box sb-card">
+          <div class="stat-number text-gradient font-bold text-3xl">5,000+</div>
+          <div class="stat-label text-xs text-secondary mt-1">Tech Jobs & Internships</div>
+        </div>
+        <div class="stat-box sb-card">
+          <div class="stat-number text-gradient font-bold text-3xl">98%</div>
+          <div class="stat-label text-xs text-secondary mt-1">ATS Parsing Accuracy</div>
+        </div>
+        <div class="stat-box sb-card">
+          <div class="stat-number text-gradient font-bold text-3xl">1,200+</div>
+          <div class="stat-label text-xs text-secondary mt-1">Verified Hiring Partners</div>
+        </div>
+        <div class="stat-box sb-card">
+          <div class="stat-number text-gradient font-bold text-3xl">45,000+</div>
+          <div class="stat-label text-xs text-secondary mt-1">Active Developers</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Product Workflow Journey -->
+  <section class="workflow-section py-16">
+    <div class="container">
+      <div class="text-center mb-12">
+        <span class="badge badge-cyan text-xs mb-2">END-TO-END CAREER ECOSYSTEM</span>
+        <h2 class="text-3xl font-bold mb-3">Your Journey to Technical Excellence</h2>
+        <p class="text-secondary max-w-xl mx-auto text-sm">
+          Unlike basic job boards, SkillBridge guides you at every phase of your software career.
+        </p>
+      </div>
+
+      <div class="workflow-grid grid grid-4 gap-6">
+        <div class="workflow-card sb-card">
+          <div class="step-num">01</div>
+          <h3 class="text-base font-bold mb-2">Build & Upload Resume</h3>
+          <p class="text-xs text-secondary mb-3">
+            Use our multi-template resume builder or upload an existing PDF. Our engine extracts your technical stack automatically.
+          </p>
+          <a routerLink="/resume-builder" class="text-xs font-semibold text-gradient">Launch Builder →</a>
+        </div>
+
+        <div class="workflow-card sb-card">
+          <div class="step-num">02</div>
+          <h3 class="text-base font-bold mb-2">ATS & Skill Gap Analysis</h3>
+          <p class="text-xs text-secondary mb-3">
+            Compare your profile against target roles (Full Stack, Cloud, AI). Discover missing technologies and tailored roadmaps.
+          </p>
+          <a routerLink="/skill-gap" class="text-xs font-semibold text-gradient">Analyze Skills →</a>
+        </div>
+
+        <div class="workflow-card sb-card">
+          <div class="step-num">03</div>
+          <h3 class="text-base font-bold mb-2">AI-Matched Applications</h3>
+          <p class="text-xs text-secondary mb-3">
+            Discover roles with dynamic match scoring. Generate customized cover letters and submit in one click.
+          </p>
+          <a routerLink="/jobs" class="text-xs font-semibold text-gradient">Discover Jobs →</a>
+        </div>
+
+        <div class="workflow-card sb-card">
+          <div class="step-num">04</div>
+          <h3 class="text-base font-bold mb-2">Interactive Interview Practice</h3>
+          <p class="text-xs text-secondary mb-3">
+            Practice FAANG-level questions and run AI Mock Interviews that grade your answers and provide instant feedback.
+          </p>
+          <a routerLink="/interview-prep" class="text-xs font-semibold text-gradient">Start Practice →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Jobs Marketplace Section -->
+  <section class="featured-jobs-section py-12">
+    <div class="container">
+      <div class="flex items-center justify-between mb-8">
+        <div>
+          <span class="badge badge-primary text-xs mb-1">CURATED OPPORTUNITIES</span>
+          <h2 class="text-2xl font-bold">Featured Jobs & Internships</h2>
+        </div>
+        <a routerLink="/jobs" class="btn btn-outline btn-sm">View All {{ featuredJobs.length || 'Jobs' }} →</a>
+      </div>
+
+      <div *ngIf="isLoading" class="grid grid-2 gap-4">
+        <div class="sb-card skeleton" style="height: 160px;"></div>
+        <div class="sb-card skeleton" style="height: 160px;"></div>
+      </div>
+
+      <div *ngIf="!isLoading" class="grid grid-2 gap-4">
+        <app-job-card *ngFor="let job of featuredJobs" [job]="job"></app-job-card>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive AI Features Spotlight -->
+  <section class="ai-spotlight-section py-16">
+    <div class="container">
+      <div class="sb-card sb-card-glow p-8 ai-banner flex items-center justify-between gap-8 flex-wrap">
+        <div class="ai-banner-content flex-1">
+          <span class="badge badge-cyan text-xs font-bold mb-2">SKILLBRIDGE AI ADVISOR</span>
+          <h2 class="text-2xl font-bold mb-3">Stuck in your career prep? Chat with our AI Mentor</h2>
+          <p class="text-sm text-secondary mb-6">
+            Get personalized career roadmaps, resume critiques, and interview answers tailored to your specific developer profile.
+          </p>
+          <div class="flex items-center gap-3">
+            <a routerLink="/career-assistant" class="btn btn-accent">Try AI Mentor Now ✨</a>
+            <a routerLink="/resume-analyzer" class="btn btn-outline">Check ATS Score 📄</a>
+          </div>
+        </div>
+
+        <div class="ai-mockup flex-1">
+          <div class="ai-chat-preview sb-card">
+            <div class="chat-bubble user-bubble text-xs">
+              "How can I transition from frontend to full stack with Angular and Node.js?"
+            </div>
+            <div class="chat-bubble ai-bubble text-xs mt-3">
+              <span class="font-bold text-gradient">SkillBridge AI:</span> Master backend routing with Express, study MongoDB indexing (ESR rule), and deploy containerized Docker containers with CI/CD.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

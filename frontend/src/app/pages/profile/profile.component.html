@@ -1,0 +1,599 @@
+<div class="profile-page py-8">
+  <div class="container-narrow">
+    <!-- Header with Profile Photo, Name, and Completion Bar -->
+    <div class="profile-header sb-card mb-8">
+      <div class="flex items-center justify-between flex-wrap gap-4 mb-4">
+        <div class="flex items-center gap-4">
+          <!-- Profile Picture with Upload Overlay -->
+          <div class="avatar-container" (click)="avatarFileInput.click()" title="Click to change profile picture">
+            <img [src]="userAvatar" alt="Profile Picture" class="avatar-xl" />
+            <div class="avatar-upload-overlay">
+              <span>📷</span>
+              <span>Change</span>
+            </div>
+            <div class="camera-badge">📷</div>
+          </div>
+          <!-- Hidden File Input for Avatar -->
+          <input
+            type="file"
+            #avatarFileInput
+            (change)="onAvatarSelected($event)"
+            accept="image/png, image/jpeg, image/jpg, image/webp"
+            class="hidden"
+          />
+
+          <div>
+            <div class="flex items-center gap-2">
+              <h1 class="text-2xl font-bold">{{ authService.currentUser()?.name || editName }}</h1>
+              <button
+                class="btn btn-outline btn-xs"
+                (click)="activeTab = 'security'"
+                title="Edit account details"
+              >
+                ✏️ Edit Name
+              </button>
+            </div>
+            <p class="text-sm text-secondary">{{ profile?.headline || 'No headline set yet • Fill your headline below' }}</p>
+            <div class="text-xs text-muted mt-1 flex items-center gap-3">
+              <span>📧 {{ authService.currentUser()?.email }}</span>
+              <button
+                *ngIf="authService.currentUser()?.avatar"
+                type="button"
+                class="text-xs text-secondary underline hover:text-danger"
+                (click)="resetAvatarToInitials()"
+              >
+                Reset to initials photo
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="completion-box text-right">
+          <div class="text-xs text-muted font-bold uppercase mb-1">Profile Strength</div>
+          <div class="text-2xl font-bold text-gradient">{{ profile?.profileCompletion ?? 0 }}%</div>
+        </div>
+      </div>
+
+      <div class="progress-bar-container">
+        <div class="progress-bar-fill" [style.width.%]="profile?.profileCompletion ?? 0"></div>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="profile-tabs flex items-center gap-2 mb-6 border-bottom pb-2 overflow-x-auto">
+      <button class="tab-btn" [class.active]="activeTab === 'general'" (click)="activeTab = 'general'">
+        👤 General & Bio
+      </button>
+      <button class="tab-btn tab-highlight" [class.active]="activeTab === 'resume'" (click)="activeTab = 'resume'">
+        📄 Upload Resume & ATS
+      </button>
+      <button class="tab-btn tab-security" [class.active]="activeTab === 'security'" (click)="activeTab = 'security'">
+        🔒 Security & Password
+      </button>
+      <button class="tab-btn" [class.active]="activeTab === 'skills'" (click)="activeTab = 'skills'">
+        ⚡ Skills ({{ profile?.skills?.length || 0 }})
+      </button>
+      <button class="tab-btn" [class.active]="activeTab === 'projects'" (click)="activeTab = 'projects'">
+        🚀 Projects ({{ profile?.projects?.length || 0 }})
+      </button>
+      <button class="tab-btn" [class.active]="activeTab === 'education'" (click)="activeTab = 'education'">
+        🎓 Education ({{ profile?.education?.length || 0 }})
+      </button>
+      <button class="tab-btn" [class.active]="activeTab === 'experience'" (click)="activeTab = 'experience'">
+        💼 Experience ({{ profile?.experience?.length || 0 }})
+      </button>
+    </div>
+
+    <!-- Tab 1: General & Preferences -->
+    <div *ngIf="activeTab === 'general' && profile" class="sb-card">
+      <form (ngSubmit)="saveGeneralProfile()">
+        <div class="grid grid-2 gap-4">
+          <div class="form-group">
+            <label class="form-label">Full Name</label>
+            <input type="text" class="form-control" [(ngModel)]="editName" name="editName" placeholder="Your full name" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Professional Headline</label>
+            <input type="text" class="form-control" [(ngModel)]="profile.headline" name="headline" placeholder="e.g. Full Stack Developer | Angular & Node.js" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Location / City</label>
+            <input type="text" class="form-control" [(ngModel)]="profile.location" name="location" placeholder="e.g. New Delhi, India" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Phone Number</label>
+            <input type="text" class="form-control" [(ngModel)]="profile.phone" name="phone" placeholder="e.g. +91 9876543210" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Preferred Job Role</label>
+            <input type="text" class="form-control" [(ngModel)]="profile.preferredRole" name="preferredRole" placeholder="e.g. Backend Developer" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Expected Salary / Stipend</label>
+            <input type="text" class="form-control" [(ngModel)]="profile.expectedSalary" name="expectedSalary" placeholder="e.g. ₹50,000/month or ₹8-12 LPA" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Work Type Preference</label>
+            <select class="select-control" [(ngModel)]="profile.workTypePreference" name="workTypePreference">
+              <option value="remote">Remote</option>
+              <option value="hybrid">Hybrid</option>
+              <option value="onsite">On-site</option>
+              <option value="any">Flexible / Any</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group mt-2">
+          <label class="form-label">About / Executive Summary</label>
+          <textarea
+            class="form-control"
+            rows="4"
+            [(ngModel)]="profile.about"
+            name="about"
+            placeholder="Write a brief professional summary about your background, career goals, and core technical strengths..."
+          ></textarea>
+        </div>
+
+        <div class="grid grid-3 gap-4 mt-2">
+          <div class="form-group">
+            <label class="form-label">GitHub URL</label>
+            <input type="text" class="form-control" [(ngModel)]="profile.github" name="github" placeholder="https://github.com/your-username" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">LinkedIn URL</label>
+            <input type="text" class="form-control" [(ngModel)]="profile.linkedin" name="linkedin" placeholder="https://linkedin.com/in/your-profile" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Portfolio URL</label>
+            <input type="text" class="form-control" [(ngModel)]="profile.portfolio" name="portfolio" placeholder="https://yourportfolio.dev" />
+          </div>
+        </div>
+
+        <div class="flex justify-end mt-4">
+          <button type="submit" class="btn btn-primary" [disabled]="isSaving">
+            {{ isSaving ? 'Saving Changes...' : 'Save General Details' }}
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Tab 2: Resume Upload & ATS Management -->
+    <div *ngIf="activeTab === 'resume' && profile" class="flex flex-col gap-6">
+      <div class="sb-card">
+        <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+          <div>
+            <h3 class="text-base font-bold">Upload Your Resume Document</h3>
+            <p class="text-xs text-secondary">Upload your PDF or DOCX resume to get evaluated with real ATS scores.</p>
+          </div>
+          <span *ngIf="profile.resumeUrl" class="badge badge-emerald text-xs">
+            ✓ Current: {{ profile.resumeUrl }}
+          </span>
+        </div>
+
+        <!-- Drag & Drop / File Select Box -->
+        <div class="upload-dropzone p-8 text-center mb-4">
+          <div class="text-3xl mb-2">📄</div>
+          <h4 class="text-sm font-bold mb-1">
+            {{ resumeFileName ? 'Selected: ' + resumeFileName : 'Select your PDF, DOCX, or TXT Resume' }}
+          </h4>
+          <p class="text-xs text-muted mb-4">Maximum file size: 10MB</p>
+
+          <label class="btn btn-outline btn-sm cursor-pointer">
+            Browse File
+            <input
+              type="file"
+              (change)="onResumeFileSelected($event)"
+              accept=".pdf,.doc,.docx,.txt"
+              class="hidden"
+            />
+          </label>
+        </div>
+
+        <div class="flex justify-end gap-3">
+          <button
+            type="button"
+            class="btn btn-primary btn-sm"
+            [disabled]="isUploadingResume || !selectedResumeFile"
+            (click)="uploadResume()"
+          >
+            {{ isUploadingResume ? 'Analyzing & Uploading...' : 'Upload & Analyze Resume 🚀' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- ATS Report Card -->
+      <div class="sb-card p-6 bg-secondary">
+        <div class="flex items-center justify-between mb-4 flex-wrap gap-4">
+          <div>
+            <div class="text-xs font-bold text-muted uppercase">ATS Compatibility Score</div>
+            <div class="text-2xl font-bold text-gradient mt-1">{{ profile.resumeScore ?? 0 }} / 100</div>
+          </div>
+          <div class="badge badge-primary text-xs">Target: {{ profile.preferredRole || 'Full Stack Developer' }}</div>
+        </div>
+
+        <div class="grid grid-4 gap-4">
+          <div class="p-3 bg-tertiary rounded">
+            <div class="flex justify-between text-xs font-bold mb-1">
+              <span>Skills Match</span> <span>{{ profile.atsBreakdown?.skillsScore ?? 0 }}%</span>
+            </div>
+            <div class="progress-bar-container">
+              <div class="progress-bar-fill" [style.width.%]="profile.atsBreakdown?.skillsScore ?? 0"></div>
+            </div>
+          </div>
+          <div class="p-3 bg-tertiary rounded">
+            <div class="flex justify-between text-xs font-bold mb-1">
+              <span>Projects Impact</span> <span>{{ profile.atsBreakdown?.projectsScore ?? 0 }}%</span>
+            </div>
+            <div class="progress-bar-container">
+              <div class="progress-bar-fill" [style.width.%]="profile.atsBreakdown?.projectsScore ?? 0"></div>
+            </div>
+          </div>
+          <div class="p-3 bg-tertiary rounded">
+            <div class="flex justify-between text-xs font-bold mb-1">
+              <span>Experience</span> <span>{{ profile.atsBreakdown?.experienceScore ?? 0 }}%</span>
+            </div>
+            <div class="progress-bar-container">
+              <div class="progress-bar-fill" [style.width.%]="profile.atsBreakdown?.experienceScore ?? 0"></div>
+            </div>
+          </div>
+          <div class="p-3 bg-tertiary rounded">
+            <div class="flex justify-between text-xs font-bold mb-1">
+              <span>Keywords</span> <span>{{ profile.atsBreakdown?.keywordsScore ?? 0 }}%</span>
+            </div>
+            <div class="progress-bar-container">
+              <div class="progress-bar-fill" [style.width.%]="profile.atsBreakdown?.keywordsScore ?? 0"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 3: Security & Password Management -->
+    <div *ngIf="activeTab === 'security'" class="flex flex-col gap-6">
+      <!-- Edit Name Section -->
+      <div class="sb-card">
+        <h3 class="text-base font-bold mb-1">Account Display Name</h3>
+        <p class="text-xs text-secondary mb-4">Change the full name displayed across your profile, job applications, and recruiter messages.</p>
+
+        <div class="flex items-center gap-3">
+          <input
+            type="text"
+            class="form-control"
+            style="max-width: 380px;"
+            [(ngModel)]="editName"
+            placeholder="Enter your full name"
+          />
+          <button
+            type="button"
+            class="btn btn-primary btn-sm"
+            [disabled]="isUpdatingName || !editName.trim()"
+            (click)="saveName()"
+          >
+            {{ isUpdatingName ? 'Saving...' : 'Update Name' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Edit Email / Gmail Section -->
+      <div class="sb-card">
+        <div class="flex items-center gap-2 mb-1">
+          <h3 class="text-base font-bold">Account Email / Gmail Address</h3>
+          <span class="badge badge-primary text-xs">Primary Login ID</span>
+        </div>
+        <p class="text-xs text-secondary mb-4">Change the email address associated with your account. You will use this new Gmail/email to log in.</p>
+
+        <div class="flex items-center gap-3 flex-wrap">
+          <input
+            type="email"
+            class="form-control"
+            style="max-width: 380px;"
+            [(ngModel)]="editEmail"
+            placeholder="e.g. yourname@gmail.com"
+          />
+          <button
+            type="button"
+            class="btn btn-primary btn-sm"
+            [disabled]="isUpdatingEmail || !editEmail.trim()"
+            (click)="saveEmail()"
+          >
+            {{ isUpdatingEmail ? 'Updating Email...' : 'Update Email Address ✉️' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Change Password Section -->
+      <div class="sb-card">
+        <h3 class="text-base font-bold mb-1">Change Account Password</h3>
+        <p class="text-xs text-secondary mb-4">Ensure your account is using a strong, unique password.</p>
+
+        <form (ngSubmit)="changePassword()" style="max-width: 480px;">
+          <div class="form-group mb-3">
+            <label class="form-label">Current Password</label>
+            <input
+              type="password"
+              class="form-control"
+              [(ngModel)]="currentPassword"
+              name="currentPassword"
+              placeholder="••••••••"
+              required
+            />
+          </div>
+
+          <div class="form-group mb-3">
+            <label class="form-label">New Password (Min. 6 characters)</label>
+            <input
+              type="password"
+              class="form-control"
+              [(ngModel)]="newPassword"
+              name="newPassword"
+              placeholder="••••••••"
+              required
+            />
+          </div>
+
+          <div class="form-group mb-4">
+            <label class="form-label">Confirm New Password</label>
+            <input
+              type="password"
+              class="form-control"
+              [(ngModel)]="confirmPassword"
+              name="confirmPassword"
+              placeholder="••••••••"
+              required
+            />
+          </div>
+
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="isChangingPassword || !currentPassword || !newPassword || !confirmPassword"
+          >
+            {{ isChangingPassword ? 'Updating Password...' : 'Save New Password' }}
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Tab 4: Skills Management -->
+    <div *ngIf="activeTab === 'skills' && profile" class="sb-card">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h3 class="text-base font-bold">Technical Skills</h3>
+          <p class="text-xs text-secondary">Add languages, frameworks, databases, and engineering tools.</p>
+        </div>
+        <button class="btn btn-primary btn-sm" (click)="showAddSkillModal = true">+ Add Skill</button>
+      </div>
+
+      <div class="skills-grid flex items-center gap-2 flex-wrap">
+        <div *ngFor="let s of profile.skills" class="skill-tag badge badge-neutral p-2 flex items-center gap-2">
+          <span class="font-bold text-primary">{{ s.name }}</span>
+          <span class="text-xs text-muted">({{ s.level }})</span>
+          <button class="remove-btn" (click)="deleteSkill(s._id)" title="Remove skill">×</button>
+        </div>
+        <div *ngIf="profile.skills.length === 0" class="text-sm text-muted p-4">
+          No skills added yet. Click "+ Add Skill" to start building your stack.
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 5: Projects Management -->
+    <div *ngIf="activeTab === 'projects' && profile" class="flex flex-col gap-4">
+      <div class="flex items-center justify-between">
+        <h3 class="text-lg font-bold">Featured Projects</h3>
+        <button class="btn btn-primary btn-sm" (click)="showAddProjectModal = true">+ Add Project</button>
+      </div>
+
+      <div *ngIf="profile.projects.length === 0" class="sb-card text-center p-6 text-muted text-sm">
+        No projects listed yet. Click "+ Add Project" to highlight your work!
+      </div>
+
+      <div *ngFor="let p of profile.projects" class="sb-card project-item-card">
+        <div class="flex items-start justify-between mb-2">
+          <h4 class="font-bold text-base">{{ p.title }}</h4>
+          <button class="btn-danger btn-sm" (click)="deleteProject(p._id)">Delete</button>
+        </div>
+        <p class="text-sm text-secondary mb-3">{{ p.description }}</p>
+        <div class="flex items-center gap-2 flex-wrap mb-3">
+          <span *ngFor="let t of p.technologies" class="badge badge-primary text-xs">{{ t }}</span>
+        </div>
+        <div class="flex items-center gap-4 text-xs">
+          <a *ngIf="p.liveUrl" [href]="p.liveUrl" target="_blank" class="text-gradient">🌐 Live Demo</a>
+          <a *ngIf="p.githubUrl" [href]="p.githubUrl" target="_blank" class="text-secondary">🐙 GitHub Repo</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 6: Education Management -->
+    <div *ngIf="activeTab === 'education' && profile" class="flex flex-col gap-4">
+      <div class="flex items-center justify-between">
+        <h3 class="text-lg font-bold">Academic Education</h3>
+        <button class="btn btn-primary btn-sm" (click)="showAddEduModal = true">+ Add Education</button>
+      </div>
+
+      <div *ngIf="profile.education.length === 0" class="sb-card text-center p-6 text-muted text-sm">
+        No academic education records added yet. Click "+ Add Education" to add your real college, degree, and graduation year.
+      </div>
+
+      <div *ngFor="let edu of profile.education" class="sb-card">
+        <div class="flex items-start justify-between">
+          <div>
+            <h4 class="font-bold text-base">{{ edu.degree }}{{ edu.fieldOfStudy ? ' in ' + edu.fieldOfStudy : '' }}</h4>
+            <div class="text-sm text-secondary">{{ edu.college }}</div>
+            <div class="text-xs text-muted mt-1">Class of {{ edu.graduationYear }}{{ edu.cgpa ? ' • CGPA / Score: ' + edu.cgpa : '' }}</div>
+          </div>
+          <button class="btn-danger btn-sm" (click)="deleteEducation(edu._id)">Delete</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 7: Experience Management -->
+    <div *ngIf="activeTab === 'experience' && profile" class="flex flex-col gap-4">
+      <div class="flex items-center justify-between">
+        <h3 class="text-lg font-bold">Work & Internship Experience</h3>
+        <button class="btn btn-primary btn-sm" (click)="showAddExpModal = true">+ Add Experience</button>
+      </div>
+
+      <div *ngIf="profile.experience.length === 0" class="sb-card text-center p-6 text-muted text-sm">
+        No work or internship experiences listed yet. Click "+ Add Experience" to document your authentic work history.
+      </div>
+
+      <div *ngFor="let exp of profile.experience" class="sb-card">
+        <div class="flex items-start justify-between">
+          <div>
+            <h4 class="font-bold text-base">{{ exp.title }}</h4>
+            <div class="text-sm text-secondary">{{ exp.company }}{{ exp.location ? ' (' + exp.location + ')' : '' }}</div>
+            <div class="text-xs text-muted mt-1">{{ exp.startDate }} — {{ exp.isCurrent ? 'Present' : exp.endDate }}</div>
+            <p class="text-xs text-secondary mt-2" *ngIf="exp.description">{{ exp.description }}</p>
+          </div>
+          <button class="btn-danger btn-sm" (click)="deleteExperience(exp._id)">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Skill Modal -->
+  <div *ngIf="showAddSkillModal" class="modal-backdrop" (click)="showAddSkillModal = false">
+    <div class="sb-card modal-card" (click)="$event.stopPropagation()">
+      <h3 class="text-base font-bold mb-4">Add Technical Skill</h3>
+      <div class="form-group">
+        <label class="form-label">Skill Name</label>
+        <input type="text" class="form-control" [(ngModel)]="newSkill.name" placeholder="e.g. Docker, TypeScript" />
+      </div>
+      <div class="grid grid-2 gap-3">
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <select class="select-control" [(ngModel)]="newSkill.category">
+            <option value="Language">Language</option>
+            <option value="Framework">Framework</option>
+            <option value="Database">Database</option>
+            <option value="Cloud">Cloud</option>
+            <option value="Tool">Tool</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Proficiency Level</label>
+          <select class="select-control" [(ngModel)]="newSkill.level">
+            <option value="Beginner">Beginner</option>
+            <option value="Intermediate">Intermediate</option>
+            <option value="Advanced">Advanced</option>
+            <option value="Expert">Expert</option>
+          </select>
+        </div>
+      </div>
+      <div class="flex justify-end gap-3 mt-4">
+        <button class="btn btn-outline btn-sm" (click)="showAddSkillModal = false">Cancel</button>
+        <button class="btn btn-primary btn-sm" (click)="addSkill()">Add to Profile</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Education Modal -->
+  <div *ngIf="showAddEduModal" class="modal-backdrop" (click)="showAddEduModal = false">
+    <div class="sb-card modal-card" (click)="$event.stopPropagation()">
+      <h3 class="text-base font-bold mb-4">Add Education Record</h3>
+      <div class="form-group">
+        <label class="form-label">College / University</label>
+        <input type="text" class="form-control" [(ngModel)]="newEdu.college" placeholder="e.g. Stanford University" />
+      </div>
+      <div class="grid grid-2 gap-3">
+        <div class="form-group">
+          <label class="form-label">Degree</label>
+          <input type="text" class="form-control" [(ngModel)]="newEdu.degree" placeholder="e.g. B.Tech / B.S." />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Field of Study</label>
+          <input type="text" class="form-control" [(ngModel)]="newEdu.fieldOfStudy" placeholder="e.g. Computer Science" />
+        </div>
+      </div>
+      <div class="grid grid-2 gap-3">
+        <div class="form-group">
+          <label class="form-label">Graduation Year</label>
+          <input type="number" class="form-control" [(ngModel)]="newEdu.graduationYear" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">CGPA / Percentage</label>
+          <input type="text" class="form-control" [(ngModel)]="newEdu.cgpa" placeholder="e.g. 8.5 / 10" />
+        </div>
+      </div>
+      <div class="flex justify-end gap-3 mt-4">
+        <button class="btn btn-outline btn-sm" (click)="showAddEduModal = false">Cancel</button>
+        <button class="btn btn-primary btn-sm" (click)="addEducation()">Add Education</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Project Modal -->
+  <div *ngIf="showAddProjectModal" class="modal-backdrop" (click)="showAddProjectModal = false">
+    <div class="sb-card modal-card" (click)="$event.stopPropagation()">
+      <h3 class="text-base font-bold mb-4">Add Project</h3>
+      <div class="form-group">
+        <label class="form-label">Project Title</label>
+        <input type="text" class="form-control" [(ngModel)]="newProject.title" placeholder="e.g. SkillBridge AI" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Technologies (comma separated)</label>
+        <input type="text" class="form-control" [(ngModel)]="projectTechInput" placeholder="e.g. Angular, Node.js, MongoDB" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Description & Highlights</label>
+        <textarea class="form-control" rows="3" [(ngModel)]="newProject.description" placeholder="Describe the problem solved and technical impact..."></textarea>
+      </div>
+      <div class="grid grid-2 gap-3">
+        <div class="form-group">
+          <label class="form-label">Live Demo URL</label>
+          <input type="text" class="form-control" [(ngModel)]="newProject.liveUrl" placeholder="https://..." />
+        </div>
+        <div class="form-group">
+          <label class="form-label">GitHub URL</label>
+          <input type="text" class="form-control" [(ngModel)]="newProject.githubUrl" placeholder="https://github.com/..." />
+        </div>
+      </div>
+      <div class="flex justify-end gap-3 mt-4">
+        <button class="btn btn-outline btn-sm" (click)="showAddProjectModal = false">Cancel</button>
+        <button class="btn btn-primary btn-sm" (click)="addProject()">Save Project</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Experience Modal -->
+  <div *ngIf="showAddExpModal" class="modal-backdrop" (click)="showAddExpModal = false">
+    <div class="sb-card modal-card" (click)="$event.stopPropagation()">
+      <h3 class="text-base font-bold mb-4">Add Work Experience</h3>
+      <div class="grid grid-2 gap-3">
+        <div class="form-group">
+          <label class="form-label">Title / Role</label>
+          <input type="text" class="form-control" [(ngModel)]="newExp.title" placeholder="e.g. Software Engineer Intern" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Company</label>
+          <input type="text" class="form-control" [(ngModel)]="newExp.company" placeholder="e.g. TechCorp Labs" />
+        </div>
+      </div>
+      <div class="grid grid-2 gap-3">
+        <div class="form-group">
+          <label class="form-label">Start Date</label>
+          <input type="text" class="form-control" [(ngModel)]="newExp.startDate" placeholder="e.g. Jun 2024" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">End Date</label>
+          <input type="text" class="form-control" [(ngModel)]="newExp.endDate" placeholder="e.g. Aug 2024 or Present" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Description</label>
+        <textarea class="form-control" rows="3" [(ngModel)]="newExp.description" placeholder="Key responsibilities and achievements..."></textarea>
+      </div>
+      <div class="flex justify-end gap-3 mt-4">
+        <button class="btn btn-outline btn-sm" (click)="showAddExpModal = false">Cancel</button>
+        <button class="btn btn-primary btn-sm" (click)="addExperience()">Save Experience</button>
+      </div>
+    </div>
+  </div>
+</div>

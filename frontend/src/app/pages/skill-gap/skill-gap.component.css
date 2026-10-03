@@ -1,0 +1,46 @@
+.skill-gap-page {
+  min-height: calc(100vh - 160px);
+}
+
+.role-pill {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-card);
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0.45rem 1rem;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+}
+
+.role-pill:hover,
+.role-pill.active {
+  background: var(--primary-500);
+  color: #ffffff;
+  border-color: var(--primary-400);
+}
+
+.text-emerald {
+  color: var(--accent-emerald);
+}
+
+.text-amber {
+  color: var(--accent-amber);
+}
+
+.roadmap-card {
+  border: 1px solid var(--border-subtle);
+  transition: all 0.2s ease;
+}
+
+.roadmap-card:hover {
+  border-color: var(--border-active);
+  transform: translateX(4px);
+}
+
+.step-badge {
+  min-width: 32px;
+}
+
+.border-subtle {
+  border: 1px solid var(--border-subtle);
+}

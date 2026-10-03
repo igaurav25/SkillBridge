@@ -1,0 +1,83 @@
+<div class="company-details-page py-8">
+  <div class="container">
+    <!-- Breadcrumb -->
+    <div class="mb-6 flex items-center gap-2 text-xs text-secondary">
+      <a routerLink="/companies" class="hover:text-primary">← All Companies</a>
+      <span>/</span>
+      <span class="text-primary font-semibold">{{ company?.name || 'Company Profile' }}</span>
+    </div>
+
+    <!-- Loading Skeleton -->
+    <div *ngIf="isLoading" class="flex flex-col gap-6">
+      <div class="sb-card p-8 skeleton h-48"></div>
+      <div class="sb-card p-8 skeleton h-64"></div>
+    </div>
+
+    <!-- Content -->
+    <div *ngIf="!isLoading && company" class="flex flex-col gap-8">
+      <!-- Company Header Card -->
+      <div class="sb-card company-header-card p-8">
+        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <div class="flex items-center gap-5">
+            <div class="company-logo-large">
+              <span class="text-3xl font-extrabold text-primary">{{ company.name.charAt(0) }}</span>
+            </div>
+            <div>
+              <div class="flex items-center gap-3 mb-1">
+                <h1 class="text-2xl font-bold">{{ company.name }}</h1>
+                <span *ngIf="company.isVerified" class="badge badge-success text-xs font-semibold flex items-center gap-1">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                  Verified Enterprise
+                </span>
+              </div>
+              <p class="text-sm text-secondary font-medium flex items-center gap-2">
+                <span>{{ company.industry }}</span>
+                <span>•</span>
+                <span>📍 {{ company.location }}</span>
+                <span>•</span>
+                <span>👥 {{ company.companySize }} Employees</span>
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3 w-full md:w-auto">
+            <a *ngIf="company.website" [href]="company.website" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm flex-1 md:flex-initial">
+              Visit Website ↗
+            </a>
+            <a *ngIf="company.socialLinks?.linkedin" [href]="company.socialLinks?.linkedin" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm">
+              LinkedIn
+            </a>
+          </div>
+        </div>
+
+        <div class="mt-6 pt-6 border-t border-border">
+          <h3 class="text-sm font-bold uppercase tracking-wider text-secondary mb-2">About The Organization</h3>
+          <p class="text-sm text-primary leading-relaxed max-w-4xl">
+            {{ company.description || 'Pioneering technology solutions and cultivating exceptional engineering talent.' }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Active Openings Section -->
+      <div>
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h2 class="text-xl font-bold">Active Openings at {{ company.name }}</h2>
+            <p class="text-xs text-secondary">Apply directly or match your developer skills against their role requirements</p>
+          </div>
+          <span class="badge badge-primary font-bold text-xs">{{ activeJobs.length }} Openings</span>
+        </div>
+
+        <!-- No openings -->
+        <div *ngIf="activeJobs.length === 0" class="sb-card p-8 text-center">
+          <p class="text-sm text-secondary">There are currently no active job or internship openings posted by this company.</p>
+        </div>
+
+        <!-- Jobs Grid -->
+        <div *ngIf="activeJobs.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <app-job-card *ngFor="let job of activeJobs" [job]="job"></app-job-card>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

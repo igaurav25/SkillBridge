@@ -1,0 +1,105 @@
+.career-assistant-page {
+  min-height: calc(100vh - 160px);
+}
+
+.chat-container {
+  height: 680px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+}
+
+.assistant-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary-500), var(--accent-cyan));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+}
+
+.online-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-emerald);
+  display: inline-block;
+}
+
+.border-bottom {
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.border-top {
+  border-top: 1px solid var(--border-subtle);
+}
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.message-row.user-row {
+  justify-content: flex-end;
+}
+
+.message-row.assistant-row {
+  justify-content: flex-start;
+}
+
+.message-bubble {
+  max-width: 80%;
+  padding: 0.9rem 1.15rem;
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.user-bubble {
+  background: var(--primary-500);
+  color: #ffffff;
+  border-bottom-right-radius: 2px;
+}
+
+.assistant-bubble {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-card);
+  color: var(--text-primary);
+  border-bottom-left-radius: 2px;
+}
+
+.suggested-pill {
+  transition: all 0.2s ease;
+}
+.suggested-pill:hover {
+  background: var(--primary-500);
+  color: #ffffff;
+}
+
+.chat-input {
+  font-size: 0.925rem;
+}
+
+.send-btn {
+  padding: 0.7rem 1.25rem;
+}
+
+.typing-indicator .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  display: inline-block;
+  animation: bounce 1.2s infinite ease-in-out;
+}
+.typing-indicator .dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-indicator .dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes bounce {
+  0%, 80%, 100% { transform: scale(0); }
+  40% { transform: scale(1); }
+}

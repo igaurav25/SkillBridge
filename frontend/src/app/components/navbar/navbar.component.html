@@ -1,0 +1,200 @@
+<nav class="sb-navbar" (click)="closeDropdowns()">
+  <div class="container flex items-center justify-between">
+    <!-- Brand Logo -->
+    <a routerLink="/" class="navbar-brand flex items-center gap-2" (click)="closeMobileMenu()">
+      <div class="brand-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m18 16 4-4-4-4"/>
+          <path d="m6 8-4 4 4 4"/>
+          <path d="m14.5 4-5 16"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <span class="brand-name">Skill<span class="text-gradient">Bridge</span></span>
+        <span class="badge badge-primary text-xs">AI</span>
+      </div>
+    </a>
+
+    <!-- Desktop Navigation Links -->
+    <div class="nav-links flex items-center gap-6">
+      <a routerLink="/jobs" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}" class="nav-link">Jobs</a>
+      <a routerLink="/companies" routerLinkActive="active" class="nav-link">Companies</a>
+
+      <!-- AI Tools Menu -->
+      <a routerLink="/skill-gap" routerLinkActive="active" class="nav-link flex items-center gap-1">
+        <span>Skill Gap</span>
+        <span class="ai-sparkle">✨</span>
+      </a>
+      <a routerLink="/career-assistant" routerLinkActive="active" class="nav-link flex items-center gap-1">
+        <span>AI Mentor</span>
+        <span class="ai-sparkle">✨</span>
+      </a>
+      <a routerLink="/resume-analyzer" routerLinkActive="active" class="nav-link">ATS Analyzer</a>
+      <a routerLink="/interview-prep" routerLinkActive="active" class="nav-link">Interview Prep</a>
+
+      <!-- Role-based Dashboard Link -->
+      <a *ngIf="authService.isStudent()" routerLink="/student/dashboard" routerLinkActive="active" class="nav-link dashboard-link">
+        Student Dashboard
+      </a>
+      <a *ngIf="authService.isRecruiter()" routerLink="/recruiter/dashboard" routerLinkActive="active" class="nav-link dashboard-link recruiter-link">
+        Recruiter Portal
+      </a>
+      <a *ngIf="authService.isAdmin()" routerLink="/admin/dashboard" routerLinkActive="active" class="nav-link dashboard-link admin-link">
+        Admin Console
+      </a>
+    </div>
+
+    <!-- Right Controls: Theme Toggle, Notifications, User Menu / Auth Buttons -->
+    <div class="nav-actions flex items-center gap-3">
+      <!-- Dark/Light Theme Switcher -->
+      <button
+        class="theme-toggle-btn"
+        (click)="themeService.toggleTheme()"
+        [attr.aria-label]="themeService.isDark() ? 'Switch to light mode' : 'Switch to dark mode'"
+        title="Toggle Theme"
+      >
+        <span *ngIf="themeService.isDark()">☀️</span>
+        <span *ngIf="!themeService.isDark()">🌙</span>
+      </button>
+
+      <!-- Authenticated Controls -->
+      <ng-container *ngIf="authService.isLoggedIn(); else guestActions">
+        <!-- Notifications Bell -->
+        <div class="dropdown-wrapper">
+          <button class="icon-btn" (click)="toggleNotifications($event)" aria-label="Notifications">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/>
+              <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
+            </svg>
+            <span *ngIf="notificationService.unreadCount() > 0" class="notification-badge">
+              {{ notificationService.unreadCount() }}
+            </span>
+          </button>
+
+          <!-- Notifications Dropdown -->
+          <div *ngIf="isNotificationsOpen" class="dropdown-menu notifications-dropdown" (click)="$event.stopPropagation()">
+            <div class="dropdown-header flex items-center justify-between">
+              <span class="font-bold text-sm">Notifications</span>
+              <button class="btn-link text-xs" (click)="markAllAsRead()">Mark all as read</button>
+            </div>
+            <div class="dropdown-content">
+              <div *ngIf="notificationService.notifications().length === 0" class="p-4 text-center text-muted text-sm">
+                No notifications yet.
+              </div>
+              <div
+                *ngFor="let item of notificationService.notifications()"
+                class="notification-item"
+                [class.unread]="!item.read"
+                (click)="markAsRead(item._id, item.link)"
+              >
+                <div class="notification-title font-semibold text-sm">{{ item.title }}</div>
+                <div class="notification-msg text-xs text-secondary">{{ item.message }}</div>
+                <div class="notification-time text-xs text-muted">{{ item.createdAt | date:'shortTime' }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- User Profile Dropdown -->
+        <div class="dropdown-wrapper">
+          <button class="user-menu-btn flex items-center gap-2" (click)="toggleUserMenu($event)">
+            <img
+              [src]="userAvatar"
+              alt="Avatar"
+              class="user-avatar"
+            />
+            <span class="user-name font-semibold text-sm">{{ authService.currentUser()?.name }}</span>
+            <span class="arrow-down text-xs">▼</span>
+          </button>
+
+          <!-- User Dropdown Menu -->
+          <div *ngIf="isUserMenuOpen" class="dropdown-menu user-dropdown" (click)="$event.stopPropagation()">
+            <div class="user-dropdown-header">
+              <div class="font-bold text-sm">{{ authService.currentUser()?.name }}</div>
+              <div class="text-xs text-muted">{{ authService.currentUser()?.email }}</div>
+              <span class="badge badge-primary text-xs mt-1">{{ authService.currentUser()?.role | uppercase }}</span>
+            </div>
+
+            <div class="dropdown-divider"></div>
+
+            <div class="user-dropdown-links">
+              <!-- Student specific -->
+              <ng-container *ngIf="authService.isStudent()">
+                <a routerLink="/student/dashboard" (click)="closeDropdowns()" class="dropdown-item">📊 My Dashboard</a>
+                <a routerLink="/profile" (click)="closeDropdowns()" class="dropdown-item">👤 Profile & Skills</a>
+                <a routerLink="/resume-builder" (click)="closeDropdowns()" class="dropdown-item">📄 Resume Builder</a>
+                <a routerLink="/applications" (click)="closeDropdowns()" class="dropdown-item">📨 My Applications</a>
+                <a routerLink="/saved-jobs" (click)="closeDropdowns()" class="dropdown-item">🔖 Saved Jobs</a>
+              </ng-container>
+
+              <!-- Recruiter specific -->
+              <ng-container *ngIf="authService.isRecruiter()">
+                <a routerLink="/recruiter/dashboard" (click)="closeDropdowns()" class="dropdown-item">💼 Recruiter Dashboard</a>
+                <a routerLink="/recruiter/post-job" (click)="closeDropdowns()" class="dropdown-item">➕ Post New Job</a>
+                <a routerLink="/recruiter/applications" (click)="closeDropdowns()" class="dropdown-item">👥 Candidate Applications</a>
+                <a routerLink="/recruiter/candidates" (click)="closeDropdowns()" class="dropdown-item">🔍 Search Candidates</a>
+              </ng-container>
+
+              <!-- Admin specific -->
+              <ng-container *ngIf="authService.isAdmin()">
+                <a routerLink="/admin/dashboard" (click)="closeDropdowns()" class="dropdown-item">🛡️ Admin Console</a>
+                <a routerLink="/admin/users" (click)="closeDropdowns()" class="dropdown-item">👥 Manage Users</a>
+                <a routerLink="/admin/jobs" (click)="closeDropdowns()" class="dropdown-item">📋 Moderate Jobs</a>
+                <a routerLink="/admin/reports" (click)="closeDropdowns()" class="dropdown-item">🚨 Reports</a>
+              </ng-container>
+            </div>
+
+            <div class="dropdown-divider"></div>
+
+            <button class="dropdown-item logout-item" (click)="logout()">
+              🚪 Sign Out
+            </button>
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- Guest Auth Buttons -->
+      <ng-template #guestActions>
+        <div class="auth-buttons flex items-center gap-2">
+          <a routerLink="/login" class="btn btn-outline btn-sm">Log In</a>
+          <a routerLink="/register" class="btn btn-primary btn-sm">Get Started</a>
+        </div>
+      </ng-template>
+
+      <!-- Mobile Hamburger Toggle Button -->
+      <button class="mobile-toggle-btn" (click)="toggleMobileMenu()" aria-label="Toggle menu">
+        <span *ngIf="!isMobileMenuOpen">☰</span>
+        <span *ngIf="isMobileMenuOpen">✕</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Drawer Menu -->
+  <div *ngIf="isMobileMenuOpen" class="mobile-drawer">
+    <div class="mobile-links flex flex-col gap-3 p-4">
+      <a routerLink="/jobs" (click)="closeMobileMenu()" class="mobile-link">Explore Jobs</a>
+      <a routerLink="/companies" (click)="closeMobileMenu()" class="mobile-link">Companies</a>
+      <a routerLink="/skill-gap" (click)="closeMobileMenu()" class="mobile-link">Skill Gap Analyzer ✨</a>
+      <a routerLink="/career-assistant" (click)="closeMobileMenu()" class="mobile-link">AI Career Assistant ✨</a>
+      <a routerLink="/resume-analyzer" (click)="closeMobileMenu()" class="mobile-link">Resume ATS Analyzer</a>
+      <a routerLink="/interview-prep" (click)="closeMobileMenu()" class="mobile-link">Interview Practice</a>
+
+      <div class="dropdown-divider"></div>
+
+      <ng-container *ngIf="authService.isLoggedIn(); else mobileGuest">
+        <a *ngIf="authService.isStudent()" routerLink="/student/dashboard" (click)="closeMobileMenu()" class="mobile-link">Student Dashboard</a>
+        <a *ngIf="authService.isRecruiter()" routerLink="/recruiter/dashboard" (click)="closeMobileMenu()" class="mobile-link">Recruiter Dashboard</a>
+        <a *ngIf="authService.isAdmin()" routerLink="/admin/dashboard" (click)="closeMobileMenu()" class="mobile-link">Admin Console</a>
+        <a routerLink="/profile" (click)="closeMobileMenu()" class="mobile-link">My Profile</a>
+        <button class="btn btn-danger btn-sm mt-3" (click)="logout()">Sign Out</button>
+      </ng-container>
+
+      <ng-template #mobileGuest>
+        <div class="flex flex-col gap-2 mt-2">
+          <a routerLink="/login" (click)="closeMobileMenu()" class="btn btn-outline">Log In</a>
+          <a routerLink="/register" (click)="closeMobileMenu()" class="btn btn-primary">Sign Up</a>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</nav>

@@ -1,0 +1,337 @@
+<div class="dashboard-page py-8">
+  <div class="container">
+    <!-- Welcome Header & Quick Action Row -->
+    <div class="welcome-header flex items-center justify-between flex-wrap gap-4 mb-8">
+      <div>
+        <span class="badge badge-primary text-xs mb-1">CANDIDATE WORKSPACE</span>
+        <h1 class="text-3xl font-bold">
+          Welcome back, <span class="text-gradient">{{ authService.currentUser()?.name }}</span> 👋
+        </h1>
+        <p class="text-sm text-secondary mt-1">
+          {{ profile?.headline || 'No headline set yet • Go to Profile to fill your genuine details' }}
+        </p>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <a routerLink="/profile" class="btn btn-outline btn-sm">👤 Edit Profile</a>
+        <a routerLink="/resume-builder" class="btn btn-outline btn-sm">📄 Resume Builder</a>
+        <a routerLink="/resume-analyzer" class="btn btn-accent btn-sm">⚡ Run ATS Check</a>
+        <a routerLink="/career-assistant" class="btn btn-primary btn-sm">✨ Ask AI Mentor</a>
+      </div>
+    </div>
+
+    <!-- Upcoming Interview Alert Banner (if any) -->
+    <div *ngIf="upcomingInterviews.length > 0" class="interview-alert-card sb-card sb-card-glow mb-8 p-4">
+      <div class="flex items-center justify-between flex-wrap gap-4">
+        <div class="flex items-center gap-3">
+          <div class="alert-icon text-2xl">📅</div>
+          <div>
+            <div class="font-bold text-base text-cyan">Upcoming Technical Interview!</div>
+            <div class="text-xs text-secondary">
+              Role: <strong>{{ upcomingInterviews[0].job?.title }}</strong> at <strong>{{ upcomingInterviews[0].job?.companyName }}</strong>
+            </div>
+            <div class="text-xs text-muted mt-1">
+              Time: {{ upcomingInterviews[0].interviewDetails?.scheduledDate | date:'medium' }} ({{ upcomingInterviews[0].interviewDetails?.mode }})
+            </div>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <a *ngIf="upcomingInterviews[0].interviewDetails?.link" [href]="upcomingInterviews[0].interviewDetails?.link" target="_blank" class="btn btn-success btn-sm">
+            Join Interview Call 🚀
+          </a>
+          <a routerLink="/interview-prep" class="btn btn-outline btn-sm">Practice Questions</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Grid: Real Profile Completion & ATS Score & Application Stats -->
+    <div class="grid grid-3 gap-6 mb-8">
+      <!-- Profile Completion Card -->
+      <div class="sb-card flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold text-muted uppercase tracking-wider">Profile Strength</span>
+            <span class="badge badge-cyan font-bold">{{ profile?.profileCompletion ?? 0 }}%</span>
+          </div>
+          <div class="progress-bar-container mb-4">
+            <div class="progress-bar-fill" [style.width.%]="profile?.profileCompletion ?? 0"></div>
+          </div>
+          <p class="text-xs text-secondary mb-3">
+            <ng-container *ngIf="(profile?.profileCompletion ?? 0) === 0">
+              Your profile is currently empty. Add your real college, skills, and projects to increase visibility.
+            </ng-container>
+            <ng-container *ngIf="(profile?.profileCompletion ?? 0) > 0">
+              Real progress: {{ profile?.skills?.length || 0 }} skills, {{ profile?.projects?.length || 0 }} projects, and {{ profile?.education?.length || 0 }} education records.
+            </ng-container>
+          </p>
+        </div>
+        <a routerLink="/profile" class="btn btn-secondary btn-sm w-full">Update Genuine Details →</a>
+      </div>
+
+      <!-- Resume ATS Score Card -->
+      <div class="sb-card flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold text-muted uppercase tracking-wider">ATS Resume Score</span>
+            <span *ngIf="hasResumeScanned" class="badge badge-emerald font-bold">{{ profile?.resumeScore }}/100</span>
+            <span *ngIf="!hasResumeScanned" class="badge badge-neutral font-bold">Not Scanned</span>
+          </div>
+
+          <ng-container *ngIf="hasResumeScanned">
+            <div class="ats-mini-bars grid grid-2 gap-2 mb-3">
+              <div>
+                <div class="flex justify-between text-xs text-muted mb-1">
+                  <span>Skills</span> <span>{{ profile?.atsBreakdown?.skillsScore ?? 0 }}%</span>
+                </div>
+                <div class="progress-bar-container">
+                  <div class="progress-bar-fill" [style.width.%]="profile?.atsBreakdown?.skillsScore ?? 0"></div>
+                </div>
+              </div>
+              <div>
+                <div class="flex justify-between text-xs text-muted mb-1">
+                  <span>Projects</span> <span>{{ profile?.atsBreakdown?.projectsScore ?? 0 }}%</span>
+                </div>
+                <div class="progress-bar-container">
+                  <div class="progress-bar-fill" [style.width.%]="profile?.atsBreakdown?.projectsScore ?? 0"></div>
+                </div>
+              </div>
+            </div>
+            <p class="text-xs text-secondary">
+              AI Recommendation: {{ profile?.suggestedImprovements?.[0] || 'Quantify achievements with impact metrics.' }}
+            </p>
+          </ng-container>
+
+          <ng-container *ngIf="!hasResumeScanned">
+            <p class="text-xs text-secondary mb-3">
+              No resume scanned yet. Scan or build your real resume using AI ATS Analyzer to get an authentic score.
+            </p>
+          </ng-container>
+        </div>
+        <a routerLink="/resume-analyzer" class="btn btn-secondary btn-sm w-full">
+          {{ hasResumeScanned ? 'View Detailed ATS Report →' : 'Scan Resume with ATS →' }}
+        </a>
+      </div>
+
+      <!-- Quick Metrics Card -->
+      <div class="sb-card flex flex-col justify-between">
+        <div>
+          <div class="text-xs font-bold text-muted uppercase tracking-wider mb-3">Application Pipeline</div>
+          <div class="grid grid-3 gap-2 text-center mb-3">
+            <div class="p-2 bg-secondary rounded">
+              <div class="text-xl font-bold">{{ recentApplications.length }}</div>
+              <div class="text-xs text-muted">Applied</div>
+            </div>
+            <div class="p-2 bg-secondary rounded">
+              <div class="text-xl font-bold text-cyan">{{ upcomingInterviews.length }}</div>
+              <div class="text-xs text-muted">Interviews</div>
+            </div>
+            <div class="p-2 bg-secondary rounded">
+              <div class="text-xl font-bold text-amber">{{ savedJobsCount }}</div>
+              <div class="text-xs text-muted">Saved</div>
+            </div>
+          </div>
+          <p class="text-xs text-secondary">
+            Live tracking of your actual applications with status changes from recruiters.
+          </p>
+        </div>
+        <a routerLink="/applications" class="btn btn-secondary btn-sm w-full">Open Application Tracker →</a>
+      </div>
+    </div>
+
+    <!-- Real-Time Multi-Platform Salary & Criteria Finder Widget -->
+    <div class="criteria-widget sb-card sb-card-glow mb-8 p-5">
+      <div class="flex items-center justify-between flex-wrap gap-4 mb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-xl">⚡</span>
+          <div>
+            <h2 class="text-base font-bold">Real-Time Platform Job Finder</h2>
+            <p class="text-xs text-secondary">
+              Find live opportunities matching your exact role & salary criteria across LinkedIn, Indeed, Internshala & Remotive
+            </p>
+          </div>
+        </div>
+        <div class="badge badge-emerald text-xs">● Live Search Connected</div>
+      </div>
+
+      <form (ngSubmit)="onCriteriaSubmit()" class="flex flex-col gap-3">
+        <!-- Criteria Inputs -->
+        <div class="grid grid-4 gap-3">
+          <!-- Role -->
+          <div class="bg-secondary p-2 rounded">
+            <label class="text-xs text-muted block mb-1">Target Role / Skill</label>
+            <input
+              type="text"
+              class="w-full bg-transparent border-0 text-sm font-semibold outline-none"
+              placeholder="e.g. Angular, Node.js, Python..."
+              [(ngModel)]="criteriaRole"
+              name="criteriaRole"
+            />
+          </div>
+
+          <!-- Location -->
+          <div class="bg-secondary p-2 rounded">
+            <label class="text-xs text-muted block mb-1">Location</label>
+            <input
+              type="text"
+              class="w-full bg-transparent border-0 text-sm font-semibold outline-none"
+              placeholder="Remote, Bangalore, Seattle..."
+              [(ngModel)]="criteriaLocation"
+              name="criteriaLocation"
+            />
+          </div>
+
+          <!-- Min Salary -->
+          <div class="bg-secondary p-2 rounded">
+            <label class="text-xs text-muted block mb-1">Min Salary / Stipend</label>
+            <input
+              type="number"
+              class="w-full bg-transparent border-0 text-sm font-semibold outline-none"
+              placeholder="e.g. 25000"
+              [(ngModel)]="criteriaMinSalary"
+              name="criteriaMinSalary"
+            />
+          </div>
+
+          <!-- Max Salary -->
+          <div class="bg-secondary p-2 rounded">
+            <label class="text-xs text-muted block mb-1">Max Salary / Stipend</label>
+            <input
+              type="number"
+              class="w-full bg-transparent border-0 text-sm font-semibold outline-none"
+              placeholder="e.g. 80000"
+              [(ngModel)]="criteriaMaxSalary"
+              name="criteriaMaxSalary"
+            />
+          </div>
+        </div>
+
+        <!-- Controls Row -->
+        <div class="flex items-center justify-between flex-wrap gap-3 pt-2">
+          <!-- Salary Presets -->
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="text-xs text-muted font-medium">Quick Salary:</span>
+            <button type="button" class="preset-pill text-xs" (click)="applySalaryPreset(15000, 35000)">
+              ₹15k - 35k (Internships)
+            </button>
+            <button type="button" class="preset-pill text-xs" (click)="applySalaryPreset(40000, 90000)">
+              ₹40k - 90k/mo
+            </button>
+            <button type="button" class="preset-pill text-xs" (click)="applySalaryPreset(80000, 150000)">
+              $80k - $150k/yr
+            </button>
+          </div>
+
+          <!-- Submit Button -->
+          <button type="submit" class="btn btn-primary btn-sm px-5" [disabled]="isSearchingLive">
+            {{ isSearchingLive ? 'Scanning Platforms...' : 'Find Live Matches 🚀' }}
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Opportunities Grid & Career Gap Roadmap -->
+    <div class="grid grid-3 gap-6 mb-8">
+      <!-- Left 2 Cols: Job Listings with Tabs -->
+      <div class="col-span-2">
+        <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+          <!-- Feed Switcher Tabs -->
+          <div class="flex p-1 bg-secondary rounded-lg">
+            <button
+              type="button"
+              class="px-3 py-1 text-xs font-bold rounded"
+              [class.bg-primary]="activeTab === 'live_platforms'"
+              [class.text-white]="activeTab === 'live_platforms'"
+              (click)="setTab('live_platforms')"
+            >
+              ⚡ Live Platform Stream ({{ livePlatformJobs.length }})
+            </button>
+            <button
+              type="button"
+              class="px-3 py-1 text-xs font-bold rounded"
+              [class.bg-primary]="activeTab === 'internal'"
+              [class.text-white]="activeTab === 'internal'"
+              (click)="setTab('internal')"
+            >
+              🏢 SkillBridge Matches ({{ recommendedJobs.length }})
+            </button>
+          </div>
+
+          <a routerLink="/jobs" class="text-xs font-semibold text-gradient">
+            Explore All Across Platforms →
+          </a>
+        </div>
+
+        <!-- Live Platform Loading Indicator -->
+        <div *ngIf="isSearchingLive" class="flex flex-col gap-4">
+          <div class="sb-card skeleton" style="height: 140px;"></div>
+          <div class="sb-card skeleton" style="height: 140px;"></div>
+        </div>
+
+        <!-- Tab 1: Live External Stream -->
+        <div *ngIf="!isSearchingLive && activeTab === 'live_platforms'" class="grid grid-2 gap-4">
+          <app-job-card *ngFor="let job of livePlatformJobs.slice(0, 6)" [job]="job"></app-job-card>
+
+          <div *ngIf="livePlatformJobs.length === 0" class="col-span-2 sb-card text-center p-6">
+            <p class="text-sm text-secondary">
+              No live platform jobs matched your exact criteria. Click "Find Live Matches" to refresh.
+            </p>
+          </div>
+        </div>
+
+        <!-- Tab 2: Internal Recommended Jobs -->
+        <div *ngIf="activeTab === 'internal'" class="grid grid-2 gap-4">
+          <app-job-card *ngFor="let job of recommendedJobs" [job]="job"></app-job-card>
+        </div>
+      </div>
+
+      <!-- Right 1 Col: Skill Gap & Target Career Progress -->
+      <div class="col-span-1">
+        <div class="sb-card h-full flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-base font-bold">Your Skills & Growth Gap</h3>
+              <span class="badge badge-purple text-xs">{{ profile?.preferredRole || criteriaRole }}</span>
+            </div>
+
+            <!-- If student has no skills yet -->
+            <div *ngIf="userSkills.length === 0" class="p-4 bg-secondary rounded text-xs text-secondary mb-4 text-center">
+              <div class="font-bold text-white mb-2 text-sm">No Technical Skills Listed</div>
+              <p class="mb-3">You haven't listed your real technical skills yet. Add your programming languages, frameworks, and databases to calculate your career readiness.</p>
+              <a routerLink="/profile" class="btn btn-primary btn-sm w-full">+ Add Real Skills in Profile</a>
+            </div>
+
+            <!-- If student has skills -->
+            <div *ngIf="userSkills.length > 0">
+              <p class="text-xs text-secondary mb-3">
+                You have <strong>{{ userSkills.length }}</strong> verified skills in your profile:
+              </p>
+              <div class="flex items-center gap-1 flex-wrap mb-4">
+                <span *ngFor="let s of userSkills.slice(0, 6)" class="skill-pill text-xs">
+                  {{ s }}
+                </span>
+                <span *ngIf="userSkills.length > 6" class="text-xs text-muted">
+                  +{{ userSkills.length - 6 }} more
+                </span>
+              </div>
+
+              <div class="text-xs font-bold text-muted uppercase tracking-wider mb-2">Recommended Next Skills:</div>
+              <div class="gap-steps flex flex-col gap-2 mb-4">
+                <div *ngFor="let miss of recommendedMissingSkills; let i = index" class="gap-step p-2 bg-secondary rounded flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <span class="text-xs font-bold text-gradient">{{ i + 1 }}</span>
+                    <span class="text-xs font-semibold">{{ miss }}</span>
+                  </div>
+                  <span class="badge badge-cyan text-xs">Recommended</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <a routerLink="/skill-gap" class="btn btn-accent btn-sm w-full">
+            View AI Skill Roadmap ✨
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

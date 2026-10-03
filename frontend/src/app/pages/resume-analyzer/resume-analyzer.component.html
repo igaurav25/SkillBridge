@@ -1,0 +1,174 @@
+<div class="analyzer-page py-8">
+  <div class="container-narrow">
+    <div class="text-center mb-8">
+      <span class="badge badge-cyan text-xs mb-2 font-bold">AI INTELLIGENCE</span>
+      <h1 class="text-3xl font-bold mb-2">Resume Upload & ATS Analyzer</h1>
+      <p class="text-sm text-secondary max-w-xl mx-auto">
+        Screen your resume against applicant tracking systems. Detect missing keywords, calculate role compatibility, and receive actionable suggestions.
+      </p>
+    </div>
+
+    <!-- Upload & Role Selector Card -->
+    <div class="sb-card sb-card-glow mb-8">
+      <div class="form-group mb-4">
+        <label class="form-label">Select Your Target Engineering Role</label>
+        <select class="select-control" [(ngModel)]="targetRole">
+          <option *ngFor="let r of availableRoles" [value]="r">{{ r }}</option>
+        </select>
+      </div>
+
+      <!-- Drag & Drop / File Input Box -->
+      <div class="upload-dropzone p-8 text-center mb-4">
+        <div class="dropzone-icon mb-2">📄</div>
+        <h3 class="text-sm font-bold mb-1">
+          {{ fileName ? 'Selected: ' + fileName : 'Upload your resume file' }}
+        </h3>
+        <p class="text-xs text-muted mb-4">Supports PDF, DOCX, and TXT (Max 10MB)</p>
+
+        <label class="btn btn-outline btn-sm cursor-pointer">
+          Browse File
+          <input type="file" (change)="onFileSelected($event)" accept=".pdf,.doc,.docx,.txt" class="hidden" />
+        </label>
+      </div>
+
+      <!-- Or Paste Text Directly -->
+      <div class="form-group mb-4">
+        <div class="flex items-center justify-between mb-1">
+          <label class="form-label">Or Paste Plain Resume Text Below</label>
+          <button type="button" class="btn-link text-xs font-bold text-gradient" (click)="populateFromProfile()">
+            ⚡ Import Details From My Profile
+          </button>
+        </div>
+        <textarea
+          class="form-control"
+          rows="5"
+          placeholder="Paste plain text of your resume..."
+          [(ngModel)]="resumeText"
+        ></textarea>
+      </div>
+
+      <button
+        class="btn btn-primary btn-lg w-full"
+        [disabled]="isAnalyzing || (!selectedFile && !resumeText.trim())"
+        (click)="analyzeResume()"
+      >
+        {{ isAnalyzing ? 'Running AI ATS Evaluation...' : 'Analyze Resume with AI 🚀' }}
+      </button>
+    </div>
+
+    <!-- AI Analysis Results Dashboard (Section 7) -->
+    <div *ngIf="analysis" class="analysis-results flex flex-col gap-6">
+      <!-- Main Score Box -->
+      <div class="sb-card p-6 bg-secondary">
+        <div class="flex items-center justify-between flex-wrap gap-4 mb-4">
+          <div>
+            <span class="badge badge-primary text-xs mb-1">EVALUATION SUMMARY</span>
+            <h2 class="text-xl font-bold">Profile Strength: {{ analysis.profileStrength }}%</h2>
+          </div>
+          <div class="overall-score-badge text-2xl font-bold text-gradient">
+            {{ analysis.profileStrength }} / 100
+          </div>
+        </div>
+
+        <p class="text-sm text-secondary mb-6 leading-relaxed">
+          {{ analysis.summary }}
+        </p>
+
+        <!-- Category Progress Bars -->
+        <div class="grid grid-4 gap-4">
+          <div class="score-card p-3 bg-primary rounded">
+            <div class="flex justify-between text-xs font-bold mb-1">
+              <span>Skills Match</span> <span>{{ analysis.skillsScore }}%</span>
+            </div>
+            <div class="progress-bar-container">
+              <div class="progress-bar-fill" [style.width.%]="analysis.skillsScore"></div>
+            </div>
+          </div>
+
+          <div class="score-card p-3 bg-primary rounded">
+            <div class="flex justify-between text-xs font-bold mb-1">
+              <span>Projects Impact</span> <span>{{ analysis.projectsScore }}%</span>
+            </div>
+            <div class="progress-bar-container">
+              <div class="progress-bar-fill" [style.width.%]="analysis.projectsScore"></div>
+            </div>
+          </div>
+
+          <div class="score-card p-3 bg-primary rounded">
+            <div class="flex justify-between text-xs font-bold mb-1">
+              <span>Experience</span> <span>{{ analysis.experienceScore }}%</span>
+            </div>
+            <div class="progress-bar-container">
+              <div class="progress-bar-fill" [style.width.%]="analysis.experienceScore"></div>
+            </div>
+          </div>
+
+          <div class="score-card p-3 bg-primary rounded">
+            <div class="flex justify-between text-xs font-bold mb-1">
+              <span>Keywords</span> <span>{{ analysis.keywordsScore }}%</span>
+            </div>
+            <div class="progress-bar-container">
+              <div class="progress-bar-fill" [style.width.%]="analysis.keywordsScore"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Skills Detected vs Missing -->
+      <div class="grid grid-2 gap-6">
+        <div class="sb-card">
+          <h3 class="text-sm font-bold text-emerald mb-3">✓ Detected Skills in Resume</h3>
+          <div class="flex items-center gap-2 flex-wrap">
+            <span *ngFor="let s of analysis.detectedSkills" class="badge badge-emerald text-xs">
+              {{ s }}
+            </span>
+          </div>
+        </div>
+
+        <div class="sb-card">
+          <h3 class="text-sm font-bold text-amber mb-3">• Missing Keywords for {{ targetRole }}</h3>
+          <div class="flex items-center gap-2 flex-wrap">
+            <span *ngFor="let s of analysis.missingSkills" class="badge badge-amber text-xs">
+              {{ s }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Strengths & Weak Sections -->
+      <div class="grid grid-2 gap-6">
+        <div class="sb-card">
+          <h3 class="text-sm font-bold mb-3">💪 Key Strengths</h3>
+          <ul class="text-xs text-secondary flex flex-col gap-2 pl-4">
+            <li *ngFor="let s of analysis.strengths">{{ s }}</li>
+          </ul>
+        </div>
+
+        <div class="sb-card">
+          <h3 class="text-sm font-bold mb-3">⚠️ Weak Sections & Flags</h3>
+          <ul class="text-xs text-secondary flex flex-col gap-2 pl-4">
+            <li *ngFor="let w of analysis.weakSections">{{ w }}</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Actionable Suggestions -->
+      <div class="sb-card">
+        <h3 class="text-base font-bold mb-3">💡 ATS Optimization Checklist</h3>
+        <ul class="text-xs text-secondary flex flex-col gap-2 pl-4 mb-4">
+          <li *ngFor="let tip of analysis.atsSuggestions">{{ tip }}</li>
+          <li *ngFor="let imp of analysis.suggestedImprovements">{{ imp }}</li>
+        </ul>
+
+        <div class="border-top pt-4 mt-2">
+          <h4 class="text-xs font-bold uppercase text-muted mb-2">Recommended Next Projects to Build:</h4>
+          <div class="flex items-center gap-2 flex-wrap">
+            <span *ngFor="let p of analysis.suggestedProjects" class="badge badge-neutral text-xs">
+              🔨 {{ p }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

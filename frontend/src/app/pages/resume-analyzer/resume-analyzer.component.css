@@ -1,0 +1,39 @@
+.analyzer-page {
+  min-height: calc(100vh - 160px);
+}
+
+.upload-dropzone {
+  border: 2px dashed var(--border-card);
+  border-radius: var(--radius-lg);
+  background: var(--bg-secondary);
+  transition: all 0.2s ease;
+}
+
+.upload-dropzone:hover {
+  border-color: var(--primary-500);
+  background: var(--bg-tertiary);
+}
+
+.dropzone-icon {
+  font-size: 2.5rem;
+}
+
+.hidden {
+  display: none;
+}
+
+.score-card {
+  border: 1px solid var(--border-subtle);
+}
+
+.text-emerald {
+  color: var(--accent-emerald);
+}
+
+.text-amber {
+  color: var(--accent-amber);
+}
+
+.border-top {
+  border-top: 1px solid var(--border-subtle);
+}

@@ -1,0 +1,86 @@
+<div class="career-assistant-page py-6">
+  <div class="container-narrow">
+    <div class="chat-container sb-card sb-card-glow flex flex-col">
+      <!-- Chat Header -->
+      <div class="chat-header flex items-center justify-between p-4 border-bottom">
+        <div class="flex items-center gap-3">
+          <div class="assistant-avatar">✨</div>
+          <div>
+            <h2 class="text-base font-bold">SkillBridge Career Advisor</h2>
+            <div class="flex items-center gap-1 text-xs text-secondary">
+              <span class="online-indicator"></span>
+              <span>AI Powered Assistant • Multilingual</span>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn btn-outline btn-sm" (click)="clearChat()">
+          🔄 New Chat
+        </button>
+      </div>
+
+      <!-- Messages Stream -->
+      <div class="chat-messages p-4 flex flex-col gap-4">
+        <div
+          *ngFor="let msg of messages"
+          class="message-row flex"
+          [class.user-row]="msg.role === 'user'"
+          [class.assistant-row]="msg.role === 'assistant'"
+        >
+          <div
+            class="message-bubble"
+            [class.user-bubble]="msg.role === 'user'"
+            [class.assistant-bubble]="msg.role === 'assistant'"
+          >
+            <div class="message-text" [innerHTML]="formatMarkdown(msg.content)"></div>
+            <div class="message-time text-xs text-muted text-right mt-1">
+              {{ msg.timestamp | date:'shortTime' }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Loading indicator -->
+        <div *ngIf="isLoading" class="message-row assistant-row flex items-center gap-2">
+          <div class="message-bubble assistant-bubble typing-indicator flex items-center gap-1">
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Suggested Questions Bar -->
+      <div class="suggested-bar p-3 border-top bg-secondary flex items-center gap-2 overflow-x-auto">
+        <span class="text-xs text-muted font-bold whitespace-nowrap">Suggested:</span>
+        <button
+          *ngFor="let q of suggestedQuestions"
+          class="badge badge-neutral text-xs cursor-pointer suggested-pill whitespace-nowrap"
+          (click)="sendMessage(q)"
+        >
+          {{ q }}
+        </button>
+      </div>
+
+      <!-- Chat Input Area -->
+      <div class="chat-input-area p-3 border-top">
+        <form (ngSubmit)="sendMessage()" class="flex items-center gap-2">
+          <input
+            type="text"
+            class="form-control chat-input"
+            placeholder="Ask anything about software careers, tech stacks, or resume tips..."
+            [(ngModel)]="inputMessage"
+            name="chatMsg"
+            [disabled]="isLoading"
+          />
+          <button
+            type="submit"
+            class="btn btn-primary btn-sm send-btn"
+            [disabled]="!inputMessage.trim() || isLoading"
+          >
+            Send ↗
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

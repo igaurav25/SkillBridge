@@ -1,0 +1,14 @@
+.company-details-page {
+  min-height: calc(100vh - 140px);
+}
+
+.company-logo-large {
+  width: 72px;
+  height: 72px;
+  border-radius: var(--radius-xl);
+  background: linear-gradient(135deg, rgba(79, 70, 229, 0.15), rgba(6, 182, 212, 0.15));
+  border: 1px solid rgba(79, 70, 229, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

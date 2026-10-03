@@ -1,0 +1,190 @@
+<div class="applications-page py-8">
+  <div class="container">
+    <div class="mb-6">
+      <span class="badge badge-primary text-xs mb-1">CAREER PROGRESS</span>
+      <h1 class="text-2xl font-bold">Application Tracker</h1>
+      <p class="text-xs text-secondary">Monitor your active job applications, timeline history, and interviews</p>
+    </div>
+
+    <!-- Status Tabs Metrics Bar (Section 11) -->
+    <div class="status-metrics-card sb-card p-3 mb-6 flex items-center gap-2 flex-wrap">
+      <button
+        class="badge status-filter-pill"
+        [class.active]="activeStatusTab === 'All'"
+        (click)="filterByTab('All')"
+      >
+        All ({{ stats.total }})
+      </button>
+      <button
+        class="badge status-filter-pill"
+        [class.active]="activeStatusTab === 'Applied'"
+        (click)="filterByTab('Applied')"
+      >
+        Applied ({{ stats.applied }})
+      </button>
+      <button
+        class="badge status-filter-pill"
+        [class.active]="activeStatusTab === 'Under Review'"
+        (click)="filterByTab('Under Review')"
+      >
+        Under Review ({{ stats.underReview }})
+      </button>
+      <button
+        class="badge status-filter-pill"
+        [class.active]="activeStatusTab === 'Shortlisted'"
+        (click)="filterByTab('Shortlisted')"
+      >
+        Shortlisted ({{ stats.shortlisted }})
+      </button>
+      <button
+        class="badge status-filter-pill"
+        [class.active]="activeStatusTab === 'Interview'"
+        (click)="filterByTab('Interview')"
+      >
+        Interview ({{ stats.interview }})
+      </button>
+      <button
+        class="badge status-filter-pill"
+        [class.active]="activeStatusTab === 'Selected'"
+        (click)="filterByTab('Selected')"
+      >
+        Selected ({{ stats.selected }})
+      </button>
+      <button
+        class="badge status-filter-pill"
+        [class.active]="activeStatusTab === 'Rejected'"
+        (click)="filterByTab('Rejected')"
+      >
+        Rejected ({{ stats.rejected }})
+      </button>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!isLoading && filteredApplications.length === 0" class="empty-state">
+      <div class="empty-state-icon">📨</div>
+      <h3 class="text-lg font-bold mb-2">No applications in this category</h3>
+      <p class="text-sm text-secondary mb-4">
+        Explore open positions and apply with your AI-optimized resume.
+      </p>
+      <a routerLink="/jobs" class="btn btn-primary btn-sm">Explore Open Positions →</a>
+    </div>
+
+    <!-- Master-Detail Applications Grid -->
+    <div *ngIf="filteredApplications.length > 0" class="grid grid-3 gap-6">
+      <!-- Left 1 Col: Applications List -->
+      <div class="applications-list col-span-1 flex flex-col gap-3">
+        <div
+          *ngFor="let app of filteredApplications"
+          class="sb-card app-item-card cursor-pointer"
+          [class.selected]="selectedApplication?._id === app._id"
+          (click)="selectApplication(app)"
+        >
+          <div class="flex items-start justify-between gap-2 mb-2">
+            <h4 class="text-sm font-bold truncate">{{ app.job?.title }}</h4>
+            <span class="badge text-xs" [ngClass]="getStatusClass(app.status)">
+              {{ app.status }}
+            </span>
+          </div>
+
+          <div class="text-xs text-secondary mb-2">{{ app.job?.companyName }}</div>
+
+          <div class="flex items-center justify-between text-xs text-muted">
+            <span>{{ app.createdAt | date:'mediumDate' }}</span>
+            <span *ngIf="app.matchScore" class="font-bold text-gradient">
+              {{ app.matchScore }}% Match
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right 2 Cols: Visual Timeline & Application Details (Section 12) -->
+      <div class="application-details-view col-span-2" *ngIf="selectedApplication">
+        <div class="sb-card p-6">
+          <div class="flex items-start justify-between flex-wrap gap-4 mb-6 pb-4 border-bottom">
+            <div>
+              <div class="flex items-center gap-2 mb-1">
+                <span class="text-xs font-semibold text-secondary">{{ selectedApplication.job?.companyName }}</span>
+                <span class="badge" [ngClass]="getStatusClass(selectedApplication.status)">
+                  {{ selectedApplication.status }}
+                </span>
+              </div>
+              <h2 class="text-xl font-bold">{{ selectedApplication.job?.title }}</h2>
+              <div class="text-xs text-muted mt-1">
+                Applied on {{ selectedApplication.createdAt | date:'medium' }}
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <a [routerLink]="['/jobs', selectedApplication.job?._id]" class="btn btn-outline btn-sm">
+                View Job Posting
+              </a>
+              <button
+                *ngIf="selectedApplication.status !== 'Withdrawn' && selectedApplication.status !== 'Selected'"
+                class="btn btn-danger btn-sm"
+                (click)="withdraw(selectedApplication)"
+              >
+                Withdraw
+              </button>
+            </div>
+          </div>
+
+          <!-- Visual Progress Step Tracker (Section 12) -->
+          <div class="visual-stepper-box p-4 bg-secondary rounded mb-6">
+            <h4 class="text-xs font-bold text-muted uppercase tracking-wider mb-4">Milestone Progression</h4>
+            <div class="stepper-row flex items-center justify-between">
+              <div
+                *ngFor="let step of statusSteps; let idx = index"
+                class="step-node text-center"
+                [class.active]="isStepActive(selectedApplication, step)"
+              >
+                <div class="step-circle mb-1">
+                  {{ isStepActive(selectedApplication, step) ? '✓' : idx + 1 }}
+                </div>
+                <div class="step-label text-xs">{{ step }}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Interview Details Card if scheduled -->
+          <div *ngIf="selectedApplication.interviewDetails?.scheduledDate" class="interview-box p-4 mb-6 bg-secondary rounded">
+            <h4 class="text-xs font-bold text-cyan uppercase tracking-wider mb-2">Technical Interview Scheduled</h4>
+            <div class="text-xs text-secondary mb-1">
+              <strong>Time:</strong> {{ selectedApplication.interviewDetails?.scheduledDate | date:'medium' }}
+            </div>
+            <div class="text-xs text-secondary mb-1">
+              <strong>Mode:</strong> {{ selectedApplication.interviewDetails?.mode }}
+            </div>
+            <div *ngIf="selectedApplication.interviewDetails?.link" class="text-xs text-secondary mt-2">
+              <a [href]="selectedApplication.interviewDetails?.link" target="_blank" class="btn btn-success btn-sm">
+                Open Meeting Link ↗
+              </a>
+            </div>
+          </div>
+
+          <!-- Timeline Audit Log -->
+          <div class="timeline-box">
+            <h4 class="text-xs font-bold text-muted uppercase tracking-wider mb-3">Status Change History</h4>
+            <div class="timeline">
+              <div *ngFor="let t of selectedApplication.timeline" class="timeline-item">
+                <div class="timeline-dot active"></div>
+                <div class="flex items-center justify-between text-xs">
+                  <span class="font-bold text-primary">{{ t.status }}</span>
+                  <span class="text-muted">{{ t.changedAt | date:'medium' }}</span>
+                </div>
+                <p class="text-xs text-secondary mt-1">{{ t.note }}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cover Letter Preview -->
+          <div *ngIf="selectedApplication.coverLetter" class="cover-letter-preview mt-6 pt-4 border-top">
+            <h4 class="text-xs font-bold text-muted uppercase tracking-wider mb-2">Cover Letter Attached</h4>
+            <p class="text-xs text-secondary whitespace-pre-line bg-secondary p-3 rounded">
+              {{ selectedApplication.coverLetter }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

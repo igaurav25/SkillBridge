@@ -1,0 +1,22 @@
+{
+  "name": "skillbridge",
+  "version": "1.0.0",
+  "description": "SkillBridge — AI-Powered Job & Internship Platform",
+  "scripts": {
+    "test:e2e": "node test_e2e.js",
+    "backend:start": "cd backend && npm start",
+    "backend:dev": "cd backend && npm run dev",
+    "frontend:start": "cd frontend && npm start",
+    "frontend:build": "cd frontend && npm run build"
+  },
+  "keywords": [
+    "job-platform",
+    "internships",
+    "ai-matching",
+    "angular",
+    "nodejs",
+    "mongodb"
+  ],
+  "author": "SkillBridge Team",
+  "license": "MIT"
+}

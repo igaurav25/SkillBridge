@@ -1,0 +1,245 @@
+<div class="job-details-page py-8">
+  <div class="container-narrow">
+    <!-- Breadcrumb back link -->
+    <a routerLink="/jobs" class="inline-flex items-center gap-1 text-sm text-secondary mb-6 hover:text-primary">
+      ← Back to all opportunities
+    </a>
+
+    <!-- Loading Skeleton -->
+    <div *ngIf="isLoading" class="sb-card skeleton" style="height: 400px;"></div>
+
+    <div *ngIf="!isLoading && job" class="flex flex-col gap-6">
+      <!-- Main Job Header Card -->
+      <div class="sb-card job-header-card">
+        <div class="flex items-start justify-between flex-wrap gap-4 mb-4">
+          <div class="flex items-center gap-4">
+            <img
+              [src]="job.companyLogo || job.company?.logo || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=100'"
+              alt="{{ job.companyName }}"
+              class="company-logo-lg"
+            />
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-sm font-semibold text-secondary">{{ job.companyName }}</span>
+                <span *ngIf="job.company?.isVerified" class="badge badge-emerald text-xs">✓ Verified</span>
+              </div>
+              <h1 class="text-2xl font-bold">{{ job.title }}</h1>
+              <div class="flex items-center gap-3 text-xs text-muted mt-1">
+                <span>📍 {{ job.location }}</span>
+                <span>•</span>
+                <span>Posted {{ job.createdAt | date:'mediumDate' }}</span>
+                <span>•</span>
+                <span>{{ job.applicantsCount }} applicants</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Buttons Bar -->
+          <div class="action-buttons flex items-center gap-2 flex-wrap">
+            <button
+              class="btn btn-outline btn-sm"
+              (click)="onToggleSave()"
+              [class.btn-secondary]="job.isSaved"
+            >
+              {{ job.isSaved ? '★ Bookmarked' : '☆ Save Job' }}
+            </button>
+
+            <button class="btn btn-outline btn-sm" (click)="shareJob()" title="Share Link">
+              🔗 Share
+            </button>
+
+            <button class="btn btn-outline btn-sm" (click)="openReportModal()" title="Report Listing">
+              🚨 Report
+            </button>
+
+            <a
+              *ngIf="directApplyUrl"
+              [href]="directApplyUrl"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn btn-primary font-bold flex items-center gap-1.5"
+            >
+              <span>Apply on {{ job.platform || 'Official Portal' }}</span>
+              <span>↗</span>
+            </a>
+
+            <button
+              *ngIf="!directApplyUrl && (authService.isStudent() || !authService.isLoggedIn())"
+              class="btn btn-primary"
+              [disabled]="job.isApplied"
+              (click)="openApplyModal()"
+            >
+              {{ job.isApplied ? '✓ Application Submitted' : 'Apply Now 🚀' }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Badges & Highlights Row -->
+        <div class="flex items-center gap-3 flex-wrap pt-4 border-top">
+          <span class="badge badge-primary">{{ job.jobType | titlecase }}</span>
+          <span class="badge badge-cyan">{{ job.workType | uppercase }}</span>
+          <span class="badge badge-neutral">{{ job.experienceLevel | titlecase }}</span>
+          <span *ngIf="job.platform" class="badge badge-emerald font-bold">
+            Portal: {{ job.platform }}
+          </span>
+          <span *ngIf="job.salary?.raw" class="font-bold text-gradient text-sm ml-auto">
+            {{ job.salary.raw }}
+          </span>
+          <span *ngIf="!job.salary?.raw && job.salary?.isDisclosed && job.salary?.min" class="font-bold text-gradient text-sm ml-auto">
+            {{ job.salary.currency === 'INR' ? '₹' : '$' }}{{ job.salary.min | number }} - {{ job.salary.currency === 'INR' ? '₹' : '$' }}{{ job.salary.max | number }} / {{ job.salary.period }}
+          </span>
+        </div>
+      </div>
+
+      <!-- AI Match Analysis Box (Section 14) -->
+      <div *ngIf="job.matchAnalysis" class="sb-card sb-card-glow ai-match-box">
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-2">
+            <span class="text-xl">⚡</span>
+            <h3 class="text-base font-bold">AI Skill Compatibility</h3>
+          </div>
+          <span class="badge badge-cyan text-sm font-bold">
+            Match: {{ job.matchAnalysis.matchScore }}%
+          </span>
+        </div>
+
+        <div class="grid grid-2 gap-4 mb-4">
+          <!-- Matched Skills -->
+          <div class="p-3 bg-secondary rounded">
+            <div class="text-xs font-bold text-emerald mb-2">✓ Matched Skills</div>
+            <div class="flex items-center gap-1 flex-wrap">
+              <span *ngFor="let s of job.matchAnalysis.matchedSkills" class="badge badge-emerald text-xs">
+                {{ s }}
+              </span>
+              <span *ngIf="job.matchAnalysis.matchedSkills.length === 0" class="text-xs text-muted">
+                No matching skills found in profile.
+              </span>
+            </div>
+          </div>
+
+          <!-- Missing Skills -->
+          <div class="p-3 bg-secondary rounded">
+            <div class="text-xs font-bold text-amber mb-2">• Missing / Recommended Skills</div>
+            <div class="flex items-center gap-1 flex-wrap">
+              <span *ngFor="let s of job.matchAnalysis.missingSkills" class="badge badge-amber text-xs">
+                {{ s }}
+              </span>
+              <span *ngIf="job.matchAnalysis.missingSkills.length === 0" class="text-xs text-muted">
+                All core technical skills matched!
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="text-xs text-secondary bg-secondary p-3 rounded">
+          <strong>AI Recommendation:</strong> {{ job.matchAnalysis.recommendation }}
+          <span class="text-muted block mt-1">(AI-generated recommendation based on current profile comparison).</span>
+        </div>
+      </div>
+
+      <!-- Job Description & Responsibilities Card -->
+      <div class="sb-card flex flex-col gap-6">
+        <div>
+          <h2 class="text-lg font-bold mb-3">About the Position</h2>
+          <p class="text-sm text-secondary whitespace-pre-line leading-relaxed">
+            {{ job.description }}
+          </p>
+        </div>
+
+        <div *ngIf="job.responsibilities && job.responsibilities.length > 0">
+          <h3 class="text-base font-bold mb-3">Key Responsibilities</h3>
+          <ul class="detail-list text-sm text-secondary flex flex-col gap-2">
+            <li *ngFor="let resp of job.responsibilities">
+              {{ resp }}
+            </li>
+          </ul>
+        </div>
+
+        <div *ngIf="job.requirements && job.requirements.length > 0">
+          <h3 class="text-base font-bold mb-3">Requirements & Qualifications</h3>
+          <ul class="detail-list text-sm text-secondary flex flex-col gap-2">
+            <li *ngFor="let req of job.requirements">
+              {{ req }}
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 class="text-base font-bold mb-3">Required Technical Stack</h3>
+          <div class="flex items-center gap-2 flex-wrap">
+            <span *ngFor="let s of job.requiredSkills" class="badge badge-primary text-sm py-1 px-3">
+              {{ s }}
+            </span>
+            <span *ngFor="let s of job.preferredSkills" class="badge badge-neutral text-sm py-1 px-3">
+              {{ s }} (Preferred)
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Apply Now Modal (Section 11 & 17) -->
+  <div *ngIf="isApplyModalOpen && job" class="modal-backdrop" (click)="closeApplyModal()">
+    <div class="sb-card modal-card" (click)="$event.stopPropagation()">
+      <div class="flex items-center justify-between mb-4 border-bottom pb-2">
+        <h3 class="text-lg font-bold">Apply for {{ job.title }}</h3>
+        <button class="btn-close" (click)="closeApplyModal()">×</button>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Select Resume</label>
+        <select class="select-control" [(ngModel)]="selectedResumeId" name="selectedResume">
+          <option *ngFor="let r of userResumes" [value]="r._id">
+            {{ r.title }} ({{ r.isPrimary ? 'Primary' : 'Saved' }})
+          </option>
+        </select>
+        <span *ngIf="userResumes.length === 0" class="text-xs text-amber mt-1">
+          No saved resumes found. We will use your profile data automatically.
+        </span>
+      </div>
+
+      <div class="form-group">
+        <div class="flex items-center justify-between mb-1">
+          <label class="form-label">Cover Letter</label>
+          <button
+            type="button"
+            class="btn btn-outline btn-sm text-xs"
+            [disabled]="isGeneratingCoverLetter"
+            (click)="generateAiCoverLetter()"
+          >
+            {{ isGeneratingCoverLetter ? 'Writing with AI...' : '✨ Generate with AI' }}
+          </button>
+        </div>
+        <textarea
+          class="form-control"
+          rows="6"
+          placeholder="Explain why you are a great match for this position..."
+          [(ngModel)]="coverLetterText"
+          name="coverLetter"
+        ></textarea>
+      </div>
+
+      <div class="flex items-center justify-end gap-3 mt-6 border-top pt-4">
+        <button type="button" class="btn btn-outline btn-sm" (click)="closeApplyModal()">Cancel</button>
+        <button
+          type="button"
+          class="btn btn-primary btn-sm"
+          [disabled]="isSubmittingApplication"
+          (click)="submitApplication()"
+        >
+          {{ isSubmittingApplication ? 'Submitting...' : 'Submit Application 🚀' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Report Content Modal -->
+  <app-report-modal
+    *ngIf="isReportModalOpen && job"
+    targetType="Job"
+    [targetId]="job._id"
+    [targetTitle]="job.title"
+    (closed)="isReportModalOpen = false"
+  ></app-report-modal>
+</div>

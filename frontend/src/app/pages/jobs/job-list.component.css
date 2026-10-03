@@ -1,0 +1,479 @@
+.jobs-page {
+  min-height: calc(100vh - 160px);
+}
+
+.criteria-card {
+  border-radius: var(--radius-lg, 12px);
+  background: var(--bg-card, #1e293b);
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+}
+
+.pulse-badge {
+  animation: pulseGlow 2s infinite ease-in-out;
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(0.98);
+  }
+}
+
+/* Stream Tabs Navigation */
+.stream-tabs-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary-500) transparent;
+}
+
+.stream-tab-btn {
+  background: var(--bg-card, #1e293b);
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.1));
+  color: var(--text-secondary);
+  cursor: pointer;
+  flex-shrink: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.stream-tab-btn:hover {
+  border-color: var(--primary-400);
+  color: var(--text-primary);
+  transform: translateY(-1px);
+}
+
+.stream-tab-btn.active {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.22), rgba(147, 51, 234, 0.18));
+  border-color: var(--primary-500, #3b82f6);
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.3);
+}
+
+.stream-tab-title {
+  font-weight: 700;
+  font-size: 0.825rem;
+}
+
+.stream-count-pill {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-subtle);
+  padding: 1px 7px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.active-pill {
+  background: var(--primary-500);
+  color: #fff;
+  border-color: var(--primary-400);
+}
+
+/* Platform Sub-Chips */
+.platforms-sub-bar {
+  border-radius: var(--radius-md, 8px);
+}
+
+.platform-sub-chip {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.platform-sub-chip:hover {
+  border-color: var(--primary-400);
+  color: var(--text-primary);
+}
+
+.platform-sub-chip.active {
+  background: var(--primary-500);
+  color: #ffffff;
+  border-color: var(--primary-500);
+  box-shadow: 0 2px 6px rgba(59, 130, 246, 0.35);
+}
+
+.platform-chip-icon {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+}
+
+/* Mode Switcher */
+.mode-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mode-btn.active {
+  background: var(--primary-500, #3b82f6);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.35);
+}
+
+.header-input {
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  width: 100%;
+  font-size: 0.9rem;
+  outline: none;
+}
+
+.salary-mini-input {
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  width: 90px;
+  outline: none;
+}
+
+.preset-pill {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  padding: 3px 10px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.preset-pill:hover {
+  background: var(--primary-500);
+  color: #fff;
+  border-color: var(--primary-500);
+}
+
+.border-top {
+  border-top: 1px solid var(--border-subtle);
+}
+
+.border-bottom {
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.col-span-1 {
+  grid-column: span 1;
+}
+
+.col-span-3 {
+  grid-column: span 3;
+}
+
+.filters-sidebar {
+  height: fit-content;
+}
+
+.checkbox-label {
+  cursor: pointer;
+  color: var(--text-secondary);
+}
+
+.checkbox-label:hover {
+  color: var(--text-primary);
+}
+
+/* Spinner for infinite scroll */
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(59, 130, 246, 0.2);
+  border-top-color: var(--primary-500);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Interactive Job Details Modal */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(6px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.details-modal-card {
+  width: 100%;
+  max-width: 800px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-card, #1e293b);
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.15));
+  border-radius: var(--radius-xl, 16px);
+  padding: 1.5rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.details-company-logo {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-md, 8px);
+  object-fit: cover;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+}
+
+.details-modal-scroll-body {
+  overflow-y: auto;
+  max-height: calc(90vh - 220px);
+  padding-right: 0.5rem;
+}
+
+.details-modal-scroll-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.details-modal-scroll-body::-webkit-scrollbar-thumb {
+  background: var(--border-subtle);
+  border-radius: 999px;
+}
+
+.source-verification-box {
+  background: rgba(59, 130, 246, 0.08);
+  border: 1px solid rgba(59, 130, 246, 0.25);
+}
+
+/* 350 Platforms Catalog Modal */
+.platforms-catalog-modal {
+  width: 100%;
+  max-width: 900px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-card, #1e293b);
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.15));
+  border-radius: var(--radius-xl, 16px);
+  padding: 1.5rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.platform-catalog-card {
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.platform-catalog-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--primary-500);
+}
+
+@media (max-width: 992px) {
+  .col-span-1 {
+    grid-column: span 4;
+  }
+  .col-span-3 {
+    grid-column: span 4;
+  }
+}
+
+/* ========================================================
+   COURSE SELECTION ACCORDION HUB ("Select Course" Dropdown)
+   ======================================================== */
+.course-selector-hub {
+  border-radius: var(--radius-xl, 16px);
+  background: linear-gradient(180deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.98));
+  border: 1.5px solid var(--border-subtle, rgba(255, 255, 255, 0.12));
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.course-selector-hub:hover {
+  border-color: rgba(59, 130, 246, 0.4);
+}
+
+.course-hub-header {
+  border-radius: var(--radius-xl, 16px);
+}
+
+.course-hub-header:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.course-hub-icon-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(147, 51, 234, 0.15));
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.btn-accordion-toggle {
+  background: var(--bg-secondary, #334155);
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.15));
+  color: var(--text-primary, #ffffff);
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 700;
+  transition: all 0.2s ease;
+}
+
+.btn-accordion-toggle:hover {
+  background: var(--primary-500, #3b82f6);
+  border-color: var(--primary-400);
+  transform: scale(1.08);
+}
+
+.btn-accordion-toggle.open {
+  background: var(--primary-600, #2563eb);
+}
+
+.course-dropdown-panel {
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(8px);
+}
+
+.course-group-card {
+  background: var(--bg-card, #1e293b);
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.course-option-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  width: 100%;
+  font-size: 0.75rem;
+  transition: all 0.15s ease;
+}
+
+.course-option-btn:hover {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: rgba(59, 130, 246, 0.25);
+  color: #ffffff;
+  transform: translateX(2px);
+}
+
+.course-option-btn.active-course {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(37, 99, 235, 0.35));
+  border-color: var(--primary-500, #3b82f6);
+  color: #ffffff;
+  font-weight: 800;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+/* ========================================================
+   REAL-TIME LIVE INGESTION TICKER BAR & RADAR
+   ======================================================== */
+.live-ticker-bar {
+  background: linear-gradient(90deg, rgba(16, 185, 129, 0.08), rgba(30, 41, 59, 0.85));
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: var(--radius-lg, 12px);
+}
+
+.live-radar-dot {
+  position: relative;
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 10px #10b981;
+}
+
+.live-radar-dot::after {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid #10b981;
+  animation: radarPulse 2s infinite ease-out;
+}
+
+@keyframes radarPulse {
+  0% {
+    transform: scale(0.5);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+
+/* Live Arrival Notification Alert */
+.live-arrival-alert-box {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.18), rgba(5, 150, 105, 0.22));
+  border: 1.5px solid #10b981;
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.25);
+}
+
+.arrival-icon-badge {
+  font-size: 1.4rem;
+  background: #10b981;
+  color: #ffffff;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.5);
+  animation: pulseBadge 1.5s infinite;
+}
+
+.btn-close-alert {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.spinner-sm {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-slide-down {
+  animation: slideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
