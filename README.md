@@ -529,7 +529,7 @@ The backend automatically creates realistic demo accounts on initial startup:
 | :--- | :--- | :--- | :--- |
 | 🎓 **Student** | `student@skillbridge.com` | `Password123!` | Student Dashboard, ATS Resume Analyzer, Resume Builder, Jobs Marketplace, Applications Tracker, Saved Jobs, AI Career Mentor, AI Mock Interviews. |
 | 💼 **Recruiter** | `recruiter@skillbridge.com` | `Password123!` | Recruiter Command Center, Post/Edit Jobs, Visual Candidate Pipeline Stepper, Talent Search, Review Candidate Resumes. |
-| 🛡️ **Admin** | `admin@skillbridge.com` | `Password123!` | Executive Governance Console, KPI Metrics, User Suspension/Deletion, Job Moderation, Company Verification, Scam Reports Review, Admin Profile & Password Management. |
+| 🛡️ **Admin** | `*********` | `********` | Executive Governance Console, KPI Metrics, User Suspension/Deletion, Job Moderation, Company Verification, Scam Reports Review, Admin Profile & Password Management. |
 
 > 💡 *The Sign-In page (`/login`) includes 1-click demo login buttons for each role for instant exploration.*
 
