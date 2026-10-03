@@ -529,7 +529,7 @@ The backend automatically creates realistic demo accounts on initial startup:
 | :--- | :--- | :--- | :--- |
 | 🎓 **Student** | `student@skillbridge.com` | `Password123!` | Student Dashboard, ATS Resume Analyzer, Resume Builder, Jobs Marketplace, Applications Tracker, Saved Jobs, AI Career Mentor, AI Mock Interviews. |
 | 💼 **Recruiter** | `recruiter@skillbridge.com` | `Password123!` | Recruiter Command Center, Post/Edit Jobs, Visual Candidate Pipeline Stepper, Talent Search, Review Candidate Resumes. |
-| 🛡️ **Admin** | `admin@skillbridge.com` | `Password123!` | Executive Governance Console, KPI Metrics, User Suspension/Deletion, Job Moderation, Company Verification, Scam Reports Review, Admin Profile & Password Management. |
+| 🛡️ **Admin** | `*********` | `********` | Executive Governance Console, KPI Metrics, User Suspension/Deletion, Job Moderation, Company Verification, Scam Reports Review, Admin Profile & Password Management. |
 
 > 💡 *The Sign-In page (`/login`) includes 1-click demo login buttons for each role for instant exploration.*
 
@@ -585,6 +585,7 @@ CLIENT_URL=http://localhost:4200
 
 # Dual-Engine AI Configuration (Optional):
 # Add your AI API key to enable live LLM generation:
+AI_API_KEY=
 GEMINI_API_KEY=
 # Note: If no key is set, the intelligent heuristic fallback engine
 # automatically handles ATS scoring, job matching, mock interviews, and roadmaps.
@@ -640,7 +641,7 @@ node test_e2e.js
    - `MONGODB_URI=mongodb+srv://<user>:<password>@cluster0.mongodb.net/skillbridge`
    - `JWT_SECRET=<your-cryptographically-secure-secret>`
    - `CLIENT_URL=https://your-skillbridge-frontend.vercel.app`
-   - `GEMINI_API_KEY=<your-gemini-api-key>`
+   - `API_KEY=<your-gemini-api-key>`
 
 ---
 
