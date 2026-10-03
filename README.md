@@ -1,7 +1,7 @@
 # 🚀 SkillBridge — AI-Powered Job & Internship Platform
 
 > **Modern Full-Stack Career Ecosystem engineered for Students, Job Seekers, Recruiters, and Administrators.**  
-> Built with **Angular 19 (Standalone & Signals)**, **Node.js / Express**, **MongoDB (Mongoose)**, and a **Dual-Engine AI Architecture** (Google Gemini API + Intelligent Heuristic Fallback).
+> Built with **Angular 19 (Standalone & Signals)**, **Node.js / Express**, **MongoDB (Mongoose)**, and a **Dual-Engine Smart AI Architecture** (Advanced AI Engine + Intelligent Heuristic Fallback).
 
 ---
 
@@ -83,7 +83,7 @@ SkillBridge provides an end-to-end career acceleration platform:
 - **Saved Jobs / Bookmarks**: Save positions for later review and apply directly from the saved jobs dashboard.
 
 ### 🤖 Dual-Engine AI Intelligence Layer
-- **Live Google Gemini API Integration**: Powered by `@google/genai` and `@google/generative-ai` (`gemini-1.5-flash` / `gemini-pro`).
+- **Live AI Engine Integration**: Powered by `@google/genai` and `@google/generative-ai` (`gemini-1.5-flash` / `gemini-pro`).
 - **Resilient Heuristic Fallback Engine**: If the `GEMINI_API_KEY` is omitted or API quotas are exhausted, an intelligent heuristic rule engine automatically takes over without downtime or error responses.
 - **AI Career Mentor Assistant**: Multi-turn conversational chatbot that pulls the candidate's actual skills and profile into the prompt context to suggest project ideas, interview prep, and career moves.
 - **AI Skill Gap Analyzer**: Select any target role (Frontend, Backend, Full Stack, AI/ML, Cloud/DevOps, Data Science, Cyber Security) to receive:
@@ -235,12 +235,12 @@ SkillBridge provides an end-to-end career acceleration platform:
    - Endpoints to fetch unread count, mark individual items as read, mark all read, or delete notifications.
 
 ### Step 7: Dual-Engine AI Integration & Heuristic Fallbacks
-1. **Gemini AI Service (`backend/src/services/aiService.js`)**:
-   - Integrates Google's `@google/genai` and `@google/generative-ai` SDKs.
+1. **AI Intelligence Service (`backend/src/services/aiService.js`)**:
+   - Integrates advanced LLM SDKs (`@google/genai` & `@google/generative-ai`).
    - Configures tailored system instructions for each AI module (Career Chat, ATS Analysis, Cover Letter, Skill Gap, Mock Interview).
 2. **Heuristic Fallback Engine**:
    - Every AI method is wrapped with intelligent rule-based fallbacks.
-   - If the Gemini API key is missing or encounters a 429 quota limit, the heuristic engine calculates keyword overlaps, computes readiness scores, and generates structured roadmaps seamlessly.
+   - If the AI API key is omitted or encounters a 429 quota limit, the heuristic engine calculates keyword overlaps, computes readiness scores, and generates structured roadmaps seamlessly.
 3. **Skill Gap Analyzer (`/api/skills/analyze-gap`)**:
    - Compares the candidate's existing verified skill set against predefined industry role profiles.
    - Returns readiness score, missing skills list, and a phased curriculum.
@@ -293,7 +293,7 @@ SkillBridge/
 ├── backend/
 │   ├── src/
 │   │   ├── config/
-│   │   │   ├── aiConfig.js               # Gemini AI client initialization
+│   │   │   ├── aiConfig.js               # AI client initialization
 │   │   │   └── db.js                     # MongoDB connection with in-memory fallback
 │   │   ├── controllers/
 │   │   │   ├── adminController.js        # KPI stats, user moderation, report review, admin profile
@@ -348,7 +348,7 @@ SkillBridge/
 │   │   │   ├── skillRoutes.js            # /api/skills
 │   │   │   └── userRoutes.js             # /api/users
 │   │   ├── services/
-│   │   │   ├── aiService.js              # Gemini API client & heuristic fallback engine
+│   │   │   ├── aiService.js              # AI engine service & heuristic fallback engine
 │   │   │   ├── liveJobService.js         # 350+ platform aggregator with caching
 │   │   │   └── resumeParserService.js    # PDF text extraction service
 │   │   ├── utils/
@@ -584,7 +584,7 @@ JWT_EXPIRE=7d
 CLIENT_URL=http://localhost:4200
 
 # Dual-Engine AI Configuration (Optional):
-# Add your Google Gemini API key to enable live LLM generation:
+# Add your AI API key to enable live LLM generation:
 GEMINI_API_KEY=
 # Note: If no key is set, the intelligent heuristic fallback engine
 # automatically handles ATS scoring, job matching, mock interviews, and roadmaps.

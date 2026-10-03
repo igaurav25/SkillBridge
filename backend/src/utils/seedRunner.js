@@ -103,8 +103,8 @@ const seedAll = async () => {
           role: 'Lead Architect',
           liveUrl: 'https://skillbridge-demo.example.com',
           githubUrl: 'https://github.com/gaurav-sharma-dev/skillbridge',
-          technologies: ['Angular 19', 'Node.js', 'Express.js', 'MongoDB', 'Gemini AI'],
-          highlights: ['Built reactive state management with Angular Signals', 'Integrated Gemini API for ATS parsing'],
+          technologies: ['Angular 19', 'Node.js', 'Express.js', 'MongoDB', 'AI Assistant'],
+          highlights: ['Built reactive state management with Angular Signals', 'Integrated Smart AI Engine for ATS parsing'],
         },
         {
           title: 'PulseAnalytics Real-Time Dashboard',
@@ -208,7 +208,7 @@ const seedAll = async () => {
         {
           title: 'SkillBridge Platform',
           description: 'AI-assisted career matching platform with real-time application tracking and ATS analysis.',
-          technologies: ['Angular', 'Node.js', 'MongoDB', 'Gemini AI'],
+          technologies: ['Angular', 'Node.js', 'MongoDB', 'AI Engine'],
           liveUrl: 'https://skillbridge.example.com',
           githubUrl: 'https://github.com/gaurav-sharma-dev/skillbridge',
         },
@@ -463,7 +463,7 @@ const seedAll = async () => {
         user: studentUser._id,
         job: jobFullStack._id,
         category: 'Full Stack',
-        notes: 'Priority #1 choice. Review Angular signals and Gemini integration before interview.',
+        notes: 'Priority #1 choice. Review Angular signals and AI integration before interview.',
       },
       {
         user: studentUser._id,

@@ -22,7 +22,7 @@ import { RouterModule } from '@angular/router';
             <div class="flex items-center gap-3">
               <span class="badge badge-neutral text-xs">Angular 19</span>
               <span class="badge badge-neutral text-xs">Node.js</span>
-              <span class="badge badge-neutral text-xs">Gemini AI</span>
+              <span class="badge badge-neutral text-xs">Smart AI</span>
             </div>
           </div>
 
@@ -64,7 +64,7 @@ import { RouterModule } from '@angular/router';
 
         <div class="footer-bottom flex items-center justify-between mt-8 pt-6">
           <p class="text-xs text-muted">
-            &copy; 2026 SkillBridge Inc. All rights reserved. Built with Angular 19, Express, MongoDB & Google Gemini AI.
+            &copy; 2026 SkillBridge Inc. All rights reserved. Built with Angular 19, Express, MongoDB & Smart AI.
           </p>
           <div class="flex items-center gap-4 text-xs text-muted">
             <span>Privacy Policy</span>
