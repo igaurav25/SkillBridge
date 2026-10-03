@@ -584,8 +584,8 @@ JWT_EXPIRE=7d
 CLIENT_URL=http://localhost:4200
 
 # Dual-Engine AI Configuration (Optional):
-# Add your Google Gemini API key to enable live LLM generation:
-GEMINI_API_KEY=
+# Add your API key to enable live LLM generation:
+API_KEY=
 # Note: If no key is set, the intelligent heuristic fallback engine
 # automatically handles ATS scoring, job matching, mock interviews, and roadmaps.
 ```
@@ -640,7 +640,7 @@ node test_e2e.js
    - `MONGODB_URI=mongodb+srv://<user>:<password>@cluster0.mongodb.net/skillbridge`
    - `JWT_SECRET=<your-cryptographically-secure-secret>`
    - `CLIENT_URL=https://your-skillbridge-frontend.vercel.app`
-   - `GEMINI_API_KEY=<your-gemini-api-key>`
+   - `API_KEY=<your-gemini-api-key>`
 
 ---
 
